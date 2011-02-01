@@ -1,17 +1,21 @@
-/*******************************************************************************
- * Copyright (c) 2010 EclipseSource and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html Contributors:
- * EclipseSource - initial API and implementation
- ******************************************************************************/
+/******************************************************************************* 
+* Copyright (c) 2010, 2011 EclipseSource and others. All rights reserved. This
+* program and the accompanying materials are made available under the terms of
+* the Eclipse Public License v1.0 which accompanies this distribution, and is
+* available at http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+*   Holger Staudacher - initial API and implementation
+*   Artur Kronenberg - Fixed bug 322091
+*******************************************************************************/
 package org.eclipse.libra.warproducts.ui.editor;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.libra.warproducts.core.WARProduct;
 import org.eclipse.libra.warproducts.ui.Messages;
 import org.eclipse.pde.internal.core.iproduct.*;

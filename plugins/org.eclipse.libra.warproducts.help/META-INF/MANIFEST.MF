@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Documentation and HelpContexts fpr WAR products
+Bundle-Name: Documentation and HelpContexts for WAR products
 Bundle-SymbolicName: org.eclipse.libra.warproducts.help;singleton:=true
 Bundle-Version: 1.4.0.qualifier
 Require-Bundle: org.eclipse.help;bundle-version="3.5.0"

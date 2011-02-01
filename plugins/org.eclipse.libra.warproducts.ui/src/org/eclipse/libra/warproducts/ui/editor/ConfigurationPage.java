@@ -1,18 +1,19 @@
-/*******************************************************************************
- * Copyright (c) 2010 EclipseSource and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html Contributors:
- * EclipseSource - initial API and implementation
- ******************************************************************************/
+/******************************************************************************* 
+* Copyright (c) 2010, 2011 EclipseSource and others. All rights reserved. This
+* program and the accompanying materials are made available under the terms of
+* the Eclipse Public License v1.0 which accompanies this distribution, and is
+* available at http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+*   Holger Staudacher - initial API and implementation
+*   Artur Kronenberg - Fixed bug 322091
+*******************************************************************************/
 package org.eclipse.libra.warproducts.ui.editor;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.libra.warproducts.ui.Messages;
 import org.eclipse.libra.warproducts.ui.WARProductConstants;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.product.PluginSection;
