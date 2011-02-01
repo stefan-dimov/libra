@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+   <context id="warproduct_export_wizard_selection">
+      <description>This page alows you to select a .warproduct file which will be used for the export.</description>
+      <topic href="concept/warproduct.htm" label="WAR Product"/>
+   </context>
+   <context id="warproduct_export_wizard_validation">
+      <description>This page reports validation errors. An exported WAR file may not work as expected when errors exist. If you know what you&apos;r doing, you can export the WAR product anyway.</description>
+      <topic href="guide/validate_warproduct.htm" label="WAR Product Validation"/>concept/warproduct.htmarproductExport.html" label="WAR Product Export"/>
+      <topic href="concept/warproduct.htm" label="WAR Product"/>
+   </context>
+   <context id="warproduct_export_wizard_export">
+      <description>This page allows you to export a WAR product to a destination outside the Eclipse workspace</description>
+      <topic href="guide/export_warproduct.htm" label="WAR Product Export"/>
+      <topic href="concept/warproduct.htm" label="WAR Product"/>
+   </context>
+   <context id="warproduct_new_wizard_filepage">
+      <description>This page allows you to create a new WAR product configuration and initialize its content.</description>
+      <topic href="guide/new_warproduct_config.htm" label="WAR Product Configuration"/>
+   </context>
+   <context id="warproduct_editor_configuration">
+      <description>Select plug-ins and libraries belonging to the WAR product.</description>
+      <topic href="guide/configuration_warproduct.htm" label="WAR Product Configuration Page"/>
+   </context>
+   <context id="warproduct_editor_overview">
+      <description>This page allows you to specify general information about the WAR product, as well as validate and export it.</description>
+      <topic href="concept/warproduct.htm" label="WAR Product"/>      
+      <topic href="guide/overview_warproduct.htm" label="WAR Product Overview Page"/>
+   </context>
+</contexts>

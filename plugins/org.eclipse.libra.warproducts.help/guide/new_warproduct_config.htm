@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta name="copyright" content="Copyright (c) EclipseSource and others 2010. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="JavaScript" type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+<title>WAR Product Configuration</title>
+<link href="../book.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>WAR Product Configuration</h1>
+<p>A WAR product configuration defines and manages all aspects of an WAR 
+product. This file is a development-time file supported by PDE only and is 
+neither interpreted nor read by the runtime. </p>
+<p>The <strong>New WAR Product Configuration</strong> wizard is available under 		
+<a class="command-link" 
+href='javascript:executeCommand("org.eclipse.ui.newWizard(newWizardId=org.eclipse.libra.warproducts.ui.NewWarProductConfigurationWizard)")'>
+  <img src="PLUGINS_ROOT/org.eclipse.help/command_link.png" alt="Open the WAR product configuration wizard">
+  <strong>File &gt; New &gt; Other... &gt; Plug-in Development &gt; WAR Product 
+  Configuration</strong>
+</a> from the top level menu.</p>
+<p><img src="../images/newWarProductWizard.png" alt="WAR Product Wizard" ></p>
+
+<h2>File Name and Location </h2>
+<p>The only restriction is that the WAR product configuration must have 
+a <em>.warproduct</em> file extension. The product configuration can be 
+placed in any project and any folder.</p>
+
+<h2>Initial File Content</h2>
+<p>A WAR product configuration can be initialized in one of two ways: </p>
+<ol>
+  <li><strong>Create a configuration file with basic settings</strong>: With 
+  this option, you get a product configuration with minimal content 
+  which you can incrementally start to define.</li>
+  <li><strong>Use a launch configuration</strong>: This option should be 
+  chosen if you already have a launch configuration that contains all the 
+  settings you want in your WAR product (e.g. product ID, list of plug-ins, 
+  etc.). PDE will use all the launch configuration settings to pre-populate 
+  the WAR product configuration. </li>
+</ol>
+
+</body>
+</html>
