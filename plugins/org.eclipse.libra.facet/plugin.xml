@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+    <copyright>
+   
+    Copyright (c) 2005, 2010 SAP AG.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+       Kaloyan Raev - initial API, implementation and documentation
+   
+    </copyright>
+   
+ -->
+<plugin>
+   <extension
+         point="org.eclipse.wst.common.project.facet.core.facets">
+      <project-facet
+            id="osgi.bundle">
+         <label>
+            OSGi Bundle
+         </label>
+         <description>
+            Enables OSGi Bundle nature for projects.
+         </description>
+      </project-facet>
+      <project-facet-version
+            facet="osgi.bundle"
+            version="4.2">
+         <action
+               id="osgi.bundle.install"
+               type="install">
+            <delegate
+                  class="org.eclipse.libra.facet.OSGiBundleInstallDelegate">
+            </delegate>
+            <config-factory
+                  class="org.eclipse.libra.facet.OSGiBundleFacetInstallConfigFactory">
+            </config-factory>
+         </action>
+         <action
+               id="osgi.bundle.uninstall"
+               type="uninstall">
+            <delegate
+                  class="org.eclipse.libra.facet.OSGiBundleUninstallDelegate">
+            </delegate>
+            <config-factory
+                  class="org.eclipse.libra.facet.OSGiBundleFacetUninstallConfigFactory">
+            </config-factory>
+         </action>
+      </project-facet-version>
+      <event-handler
+            facet="jpt.jpa"
+            type="POST_INSTALL">
+         <delegate
+               class="org.eclipse.libra.facet.OSGiBundleFacetEventHandler">
+         </delegate>
+      </event-handler>
+   </extension>
+   <extension
+         point="org.eclipse.wst.common.project.facet.core.presets">
+      <static-preset
+            id="osgi.java.bundle.preset">
+         <label>
+            OSGi Bundle
+         </label>
+         <description>
+            Configures a Java project as a OSGi Bundle project.
+         </description>
+         <facet
+               id="java"
+               version="1.5">
+         </facet>
+         <facet
+               id="osgi.bundle"
+               version="4.2">
+         </facet>
+      </static-preset>
+      <static-preset
+            id="osgi.web.bundle.preset">
+         <label>
+            OSGi Web Application Bundle
+         </label>
+         <description>
+            Configures a Dynamic Web application as a OSGi Web Application Bundle project.
+         </description>
+         <facet
+               id="java"
+               version="1.5">
+         </facet>
+         <facet
+               id="jst.web"
+               version="2.5">
+         </facet>
+         <facet
+               id="osgi.bundle"
+               version="4.2">
+         </facet>
+      </static-preset>
+      <static-preset
+            id="osgi.persistent.bundle.preset">
+         <label>
+            OSGi Persistent Bundle
+         </label>
+         <description>
+            Configures a JPA application as a OSGi Persistent Bundle project.
+         </description>
+         <facet
+               id="java"
+               version="1.5">
+         </facet>
+         <facet
+               id="jst.utility"
+               version="1.0">
+         </facet>
+         <facet
+               id="jpt.jpa"
+               version="1.0">
+         </facet>
+         <facet
+               id="osgi.bundle"
+               version="4.2">
+         </facet>
+      </static-preset>
+   </extension>
+   <extension
+         point="org.eclipse.wst.common.project.facet.core.runtimes">
+      <supported>
+         <runtime-component
+               any="true">
+         </runtime-component>
+         <facet
+               id="osgi.bundle">
+         </facet>
+      </supported>
+   </extension>
+
+</plugin>

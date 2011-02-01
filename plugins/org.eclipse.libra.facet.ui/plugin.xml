@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+    <copyright>
+   
+    Copyright (c) 2005, 2010 SAP AG.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+       Kaloyan Raev - initial API, implementation and documentation
+   
+    </copyright>
+   
+ -->
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="org.eclipse.libra.facet.ui.convertAction"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="org.eclipse.libra.facet.ui.popup.actions.ConvertProjectsToBundlesAction"
+               enablesFor="+"
+               id="org.eclipse.libra.facet.ui.popup.actions.ConvertProjectsToBundlesAction"
+               label="Convert to OSGi Bundle Projects..."
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
+         </action>
+         <visibility>
+         	<not>
+				<or>
+					<objectState
+	        				name="open"
+	        				value="false"/>
+					<objectState 
+				            name="projectNature" 
+				            value="org.eclipse.pde.FeatureNature"/>
+					<objectState 
+				            name="projectNature" 
+				            value="org.eclipse.pde.UpdateSiteNature"/>
+				</or>
+         	</not>
+         </visibility>
+         <enablement>
+         	<not>
+				<test 
+			            property="org.eclipse.wst.common.project.facet.core.projectFacet" 
+			            value="osgi.bundle"/>
+         	</not>
+         </enablement>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.pde.ui.launchShortcuts">
+      <shortcut
+            id="org.eclipse.wst.server.launchShortcut"
+            label="Run on Server"
+            mode="run"
+            osgi="true"
+            projectSpecific="true">
+      </shortcut>
+      <shortcut
+            id="org.eclipse.wst.server.launchShortcut"
+            label="Debug on Server"
+            mode="debug"
+            osgi="true"
+            projectSpecific="true">
+      </shortcut>
+      <shortcut
+            id="org.eclipse.wst.server.launchShortcut"
+            label="Profile on Server"
+            mode="profile"
+            osgi="true"
+            projectSpecific="true">
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.wst.common.project.facet.ui.images">
+      <image
+            facet="osgi.bundle"
+            path="icons/obj16/bundle_obj.png">
+      </image>
+   </extension>
+   <extension
+         point="org.eclipse.wst.common.project.facet.ui.wizardPages">
+      <wizard-pages
+            action="osgi.bundle.install">
+         <page
+               class="org.eclipse.libra.facet.ui.wizards.OSGiBundleFacetInstallPage">
+         </page>
+      </wizard-pages>
+      <wizard-pages
+            action="osgi.bundle.uninstall">
+         <page
+               class="org.eclipse.libra.facet.ui.wizards.OSGiBundleFacetUninstallPage">
+         </page>
+      </wizard-pages>
+   </extension>
+   
+
+</plugin>

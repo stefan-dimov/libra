@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.jdt.core,
+ org.eclipse.debug.core
+Bundle-Vendor: %provider.name
+Fragment-Host: org.eclipse.libra.facet.ui;bundle-version="0.1.0.qualifier"
+Bundle-Version: 0.1.0.qualifier
+Bundle-Name: WAB Conversion Tests
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.libra.facet.test
+Import-Package: org.junit;version="4.5.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+

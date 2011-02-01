@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    <copyright>
+   
+    Copyright (c) 2005, 2010 SAP AG.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+       Kaloyan Raev - initial API, implementation and documentation
+   
+    </copyright>
+   
+ -->
+<feature
+      id="org.eclipse.libra.facet.feature"
+      label="OSGi Enterprise Tools"
+      version="0.1.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      Libra provides Convert to Web Application Bundle functionality
+   </description>
+
+   <plugin
+         id="org.eclipse.libra.facet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.libra.facet.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
