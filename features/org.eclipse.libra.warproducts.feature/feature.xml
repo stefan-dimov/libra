@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.libra.warproducts.feature"
+      label="WAR Products Feature"
+      version="1.0.0.qualifier">
+
+   <description url="http://eclipsesource.com">
+      The Feature contains all bundles for the WAR product tooling.
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="license.html">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.libra.warproducts.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.libra.warproducts.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.libra.warproducts.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

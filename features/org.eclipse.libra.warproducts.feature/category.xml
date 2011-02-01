@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.libra.warproducts.feature_1.0.0.qualifier.jar" id="org.eclipse.libra.warproducts.feature" version="1.0.0.qualifier">
+      <category name="org.eclipse.libra"/>
+   </feature>
+   <category-def name="org.eclipse.libra" label="Server Side Equinox Tooling"/>
+</site>

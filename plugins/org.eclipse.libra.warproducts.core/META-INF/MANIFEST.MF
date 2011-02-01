@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.eclipse.libra.warproducts.core
+Bundle-Version: 1.4.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-Localization: plugin
+Export-Package: org.eclipse.libra.warproducts.core;x-friends:="org.eclipse.libra.warproducts.core.test,org.eclipse.libra.warproducts.ui",
+ org.eclipse.libra.warproducts.core.validation;x-friends:="org.eclipse.libra.warproducts.core.test,org.eclipse.libra.warproducts.ui"
+Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.pde.core;bundle-version="3.6.0",
+ org.eclipse.pde.build;bundle-version="3.6.0"
+Bundle-Vendor: %Bundle-Vendor

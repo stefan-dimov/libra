@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+     <wizard
+        icon="icons/prd_config_wiz.gif"
+        class="org.eclipse.libra.warproducts.ui.newwizard.NewWarProductFileWizard"
+        category="org.eclipse.pde.PDE"
+        name="%new.warproduct.config"
+        id="org.eclipse.libra.warproducts.ui.NewWarProductConfigurationWizard">
+       <description>
+          %new.warproduct.desc
+       </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.libra.warproducts.ui.editor.WARProductEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
+            default="true"
+            icon="icons/product_xml_obj.gif"
+            id="org.eclipse.libra.warproducts.WARProductEditor"
+            name="%warproduct.editor">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.libra.warproducts.WARProductFile">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   
+   <extension 
+       point="org.eclipse.core.contenttype.contentTypes">
+    <content-type 
+          id="org.eclipse.libra.warproducts.WARProductFile" 
+          name="%WARProductConfiguration" 
+          base-type="org.eclipse.core.runtime.xml"
+        priority="high"       
+        file-extensions="warproduct">
+      <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+        <parameter name="element" value="product"/>
+    </describer>
+    </content-type>    
+       
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="org.eclipse.pde.ui.PluginDevelopment"
+            class="org.eclipse.libra.warproducts.ui.exportwizard.ExportWARProductWizard"
+            icon="icons/exp_product.gif"
+            id="org.eclipse.libra.warproducts.ui.ExportWarProductConfigurationWizard"
+            name="%WARProductExportWizard.label">
+         <description>
+            %WARProductExportWizard.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFile"
+               name="*.warproduct">
+         </selection>
+         <selection
+               class="org.eclipse.core.resources.IContainer">
+         </selection>
+      </wizard>
+   </extension>
+
+</plugin>
