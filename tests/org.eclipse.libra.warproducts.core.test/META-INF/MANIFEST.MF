@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: warproducts core test
+Bundle-Name: WAR Products core tests (Incubation)
 Bundle-SymbolicName: org.eclipse.libra.warproducts.core.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Require-Bundle: org.junit;bundle-version="3.8.2",
- org.eclipse.libra.warproducts.core;bundle-version="1.0.0",
+ org.eclipse.libra.warproducts.core;bundle-version="0.1.0",
  org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.core.resources;bundle-version="3.6.0",
  org.eclipse.pde.core;bundle-version="3.6.0"
