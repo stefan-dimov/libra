@@ -14,9 +14,9 @@
 	<modules>
 		<module>../../plugins/org.eclipse.libra.facet</module>
 		<module>../../plugins/org.eclipse.libra.facet.ui</module>
-		<module>../../tests/org.eclipse.libra.facet.test</module>
 		<module>../../features/org.eclipse.libra.facet.feature</module>
 		<module>../org.eclipse.libra.repository</module>
+		<module>../../tests/org.eclipse.libra.facet.test</module>
 	</modules>
 	
 	<build>

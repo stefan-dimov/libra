@@ -13,6 +13,14 @@
 	<packaging>eclipse-test-plugin</packaging>
 	<name>Libra Facet Test Plug-in</name>
 	
+	<repositories>
+		<repository>
+			<id>libra</id>
+			<url>https://hudson.eclipse.org/hudson/view/WTP/job/cbi-wtp.inc-libra/ws/development/org.eclipse.libra.repository/target/</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+	
 	<build>
 		<plugins>
 			<plugin>
