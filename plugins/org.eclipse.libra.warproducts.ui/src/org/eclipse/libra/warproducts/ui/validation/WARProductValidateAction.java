@@ -133,7 +133,9 @@ public class WARProductValidateAction extends Action {
       VersionConstraint constraint = error.getUnsatisfiedConstraint();
       if( constraint != null ) {
         String unresolvedBundleId = constraint.getName();
-        if( !isBanned( unresolvedBundleId ) ) {
+        if(    !isBanned( unresolvedBundleId ) 
+            && !unresolvedBundleId.equals( Validator.SERVLET_BRIDGE_ID ) ) 
+        {
           validErrors.add( error );
         }
       }
