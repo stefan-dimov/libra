@@ -16,7 +16,7 @@
 	<repositories>
 		<repository>
 			<id>libra</id>
-			<url>https://hudson.eclipse.org/hudson/view/WTP/job/cbi-wtp.inc-libra/ws/development/org.eclipse.libra.repository/target/</url>
+			<url>https://hudson.eclipse.org/hudson/view/WTP/job/cbi-wtp.inc-libra/ws/development/org.eclipse.libra.repository/target/site/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
