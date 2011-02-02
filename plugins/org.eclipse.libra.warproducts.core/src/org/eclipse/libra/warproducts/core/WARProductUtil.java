@@ -24,9 +24,12 @@ public class WARProductUtil {
     IPath result = null;
     boolean fromTarget = product.isLibraryFromTarget( libPath );
     if( fromTarget ) {
-      String targetString = TargetPlatform.getLocation();
-      IPath targetPath = new Path( targetString );
-      result = targetPath.append( libPath );
+      String absoluteBridgePath = getServletBridgeAbsolutePath();
+      if( absoluteBridgePath != null ) {
+        if( absoluteBridgePath.indexOf( libPath.toPortableString() ) != -1 ) {
+          result = new Path( absoluteBridgePath );
+        }
+      }
     } else {
       IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
       IFile lib = root.getFile( libPath );
@@ -36,26 +39,30 @@ public class WARProductUtil {
   }
   
   public static void addServletBridgeFromTarget( final IWARProduct product ) {
+    String path = getServletBridgeAbsolutePath();
+    if( path != null ) {
+      IPath absolutePath = new Path( path );
+      IPath relativePath = new Path( absolutePath.lastSegment() );
+      product.addLibrary( relativePath, true );
+    }
+  }
+
+  private static String getServletBridgeAbsolutePath() {
+    String result = null;
     ModelEntry entry = PluginRegistry.findEntry( Validator.SERVLET_BRIDGE_ID );
     if( entry != null ) {
       IPluginModelBase[] targetModels = entry.getExternalModels();
-      boolean foundBridge = false;
-      for( int i = 0; i < targetModels.length && !foundBridge; i++ ) {
+      for( int i = 0; i < targetModels.length && result == null; i++ ) {
         IPluginModelBase bridgeModel = targetModels[ i ];
         String libLocation = bridgeModel.getInstallLocation();
         if(    libLocation != null 
             && libLocation.toLowerCase().indexOf( ".jar" ) != -1 ) //$NON-NLS-1$
         {
-          String targetLocation = TargetPlatform.getLocation();
-          int targetLength = targetLocation.length();
-          int liblength = libLocation.length();
-          String pathToAdd = libLocation.substring( targetLength, liblength );
-          IPath bridgePath = new Path( pathToAdd );
-          product.addLibrary( bridgePath, true );
-          foundBridge = true;
+          result = libLocation;
         }
       }
     }
+    return result;
   }
   
 }

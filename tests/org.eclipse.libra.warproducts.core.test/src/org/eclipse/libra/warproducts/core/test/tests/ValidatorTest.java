@@ -29,6 +29,10 @@ public class ValidatorTest extends TestCase {
   private static final String EQUINOX_REGISTRY = "org.eclipse.equinox.registry";
   private static final String EQUINOX_HTTP_REGISTRY 
     = "org.eclipse.equinox.http.registry";
+  private static final String EQUINOX_HTTP_JETTY 
+    = "org.eclipse.equinox.http.jetty";
+  private static final String JETTY_SERVER = "org.mortbay.jetty.server";
+  private static final String JETTY_UTIL = "org.mortbay.jetty.util";
   private static final String SERVLETBRIDGE_EXTENSIONBUNDLE 
     = "org.eclipse.equinox.servletbridge.extensionbundle";
   private static final String UPDATE_CONFIGURATOR 
@@ -113,6 +117,21 @@ public class ValidatorTest extends TestCase {
   
   public void testJavaxServletIsExcluded() throws Exception {
     String id = JAVAX_SERVLET;
+    checkForBannedBundle( id );
+  }
+  
+  public void testEquinoxHTTPJettyIsExcluded() throws Exception {
+    String id = EQUINOX_HTTP_JETTY;
+    checkForBannedBundle( id );
+  }
+  
+  public void testJettyServerIsExcluded() throws Exception {
+    String id = JETTY_SERVER;
+    checkForBannedBundle( id );
+  }
+  
+  public void testJettyUtilIsExcluded() throws Exception {
+    String id = JETTY_UTIL;
     checkForBannedBundle( id );
   }
   
