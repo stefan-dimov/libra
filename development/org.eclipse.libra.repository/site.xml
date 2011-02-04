@@ -3,5 +3,8 @@
    <feature url="features/org.eclipse.libra.facet.feature_0.1.0.qualifier.jar" id="org.eclipse.libra.facet.feature" version="0.1.0.qualifier">
       <category name="libra"/>
    </feature>
+   <feature url="features/org.eclipse.libra.warproducts.feature_0.1.0.qualifier.jar" id="org.eclipse.libra.warproducts.feature" version="0.1.0.qualifier">
+      <category name="libra"/>
+   </feature>
    <category-def name="libra" label="libra"/>
 </site>

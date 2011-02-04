@@ -15,8 +15,13 @@
 		<module>../../plugins/org.eclipse.libra.facet</module>
 		<module>../../plugins/org.eclipse.libra.facet.ui</module>
 		<module>../../features/org.eclipse.libra.facet.feature</module>
+		<module>../../plugins/org.eclipse.libra.warproducts.core</module>
+		<module>../../plugins/org.eclipse.libra.warproducts.ui</module>
+		<module>../../plugins/org.eclipse.libra.warproducts.help</module>
+		<module>../../features/org.eclipse.libra.warproducts.feature</module>
 		<module>../org.eclipse.libra.repository</module>
 		<module>../../tests/org.eclipse.libra.facet.test</module>
+		<module>../../tests/org.eclipse.libra.warproducts.core.test</module>
 	</modules>
 	
 	<build>
