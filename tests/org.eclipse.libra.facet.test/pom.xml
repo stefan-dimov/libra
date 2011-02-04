@@ -13,14 +13,6 @@
 	<packaging>eclipse-test-plugin</packaging>
 	<name>Libra Facet Test Plug-in</name>
 	
-	<repositories>
-		<repository>
-			<id>libra</id>
-			<url>https://hudson.eclipse.org/hudson/view/WTP/job/cbi-wtp.inc-libra/ws/development/org.eclipse.libra.repository/target/site/</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
-	
 	<build>
 		<plugins>
 			<plugin>
@@ -28,6 +20,8 @@
 				<artifactId>maven-osgi-test-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
 					<argLine>-Xms128m -Xmx512m -XX:MaxPermSize=256m</argLine>
 					<product>org.eclipse.sdk.ide</product>
 					<application>org.eclipse.ui.ide.workbench</application>
