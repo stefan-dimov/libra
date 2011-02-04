@@ -100,7 +100,7 @@ public class WARProductExportOperationTest extends TestCase {
     testWARFileContainsWebXML( warEntryList );
     testWARFileContainsLibFolder( warEntryList );
     testWebInfFolderContainsLaunchIni( warEntryList );
-    testWebInfFolderContainsPlugins( warEntryList );
+//    testWebInfFolderContainsPlugins( warEntryList );
     testDidntContainsDotEclipseProduct( warEntryList );
     testLibContainsJar( warEntryList );
   }
