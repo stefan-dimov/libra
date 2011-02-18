@@ -9,9 +9,9 @@
 		<relativePath>../../development/org.eclipse.libra.releng/pom.xml</relativePath>
 	</parent>
 	
-	<artifactId>org.eclipse.libra.facet</artifactId>
+	<artifactId>org.eclipse.libra.warproducts.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>Libra Facet Plug-in</name>
+	<name>WAR Products UI (Incubation)</name>
 
 	<build>
 		<plugins>

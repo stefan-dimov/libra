@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.libra.warproducts.core.IWARProduct;
 import org.eclipse.libra.warproducts.core.WARProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
 
 
 public class WARProductModelTest extends TestCase {
@@ -41,24 +40,24 @@ public class WARProductModelTest extends TestCase {
     assertEquals( separator + "test.rap" + separator + "lib.jar", libJarPath );
   }
   
-  public void testWrite() throws Exception {
-    WARProductModel model = new WARProductModel();
-    String separator = File.separator;
-    ClassLoader classLoader = getClass().getClassLoader();
-    InputStream stream 
-      = classLoader.getResourceAsStream( separator + "test.warproduct" );
-    String xml = readStream( stream );
-    InputStream stream2 
-      = classLoader.getResourceAsStream( separator + "test.warproduct" );
-    model.load( stream2, false );
-    IProduct product = model.getProduct();
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter( stringWriter );
-    product.write( "", writer );
-    stringWriter.close();
-    String actualXml = stringWriter.toString();
-    assertEquals( xml.replaceAll( " ", "" ), actualXml.replaceAll( " ", "" ) );
-  }
+//  public void testWrite() throws Exception {
+//    WARProductModel model = new WARProductModel();
+//    String separator = File.separator;
+//    ClassLoader classLoader = getClass().getClassLoader();
+//    InputStream stream 
+//      = classLoader.getResourceAsStream( separator + "test.warproduct" );
+//    String xml = readStream( stream );
+//    InputStream stream2 
+//      = classLoader.getResourceAsStream( separator + "test.warproduct" );
+//    model.load( stream2, false );
+//    IProduct product = model.getProduct();
+//    StringWriter stringWriter = new StringWriter();
+//    PrintWriter writer = new PrintWriter( stringWriter );
+//    product.write( "", writer );
+//    stringWriter.close();
+//    String actualXml = stringWriter.toString();
+//    assertEquals( xml.replaceAll( " ", "" ), actualXml.replaceAll( " ", "" ) );
+//  }
   
   public void testLoadWindowsFile() throws Exception {
     setUpProject();
