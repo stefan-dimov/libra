@@ -16,7 +16,7 @@
  -->
 <feature
       id="org.eclipse.libra.facet.feature"
-      label="OSGi Enterprise Tools"
+      label="OSGi Facet Feature"
       version="0.1.0.qualifier">
 
    <description url="http://www.example.com/description">
