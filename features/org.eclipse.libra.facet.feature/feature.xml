@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    <copyright>
-   
-    Copyright (c) 2005, 2010 SAP AG.
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
-   
-    Contributors:
-       Kaloyan Raev - initial API, implementation and documentation
-   
-    </copyright>
-   
- -->
 <feature
       id="org.eclipse.libra.facet.feature"
       label="%featureName"
       version="0.1.0.qualifier"
       provider-name="%providerName">
 
-   <description url="http://www.example.com/description">
-      Provides OSGi Bundle facet for projects.
+   <description>
+     %description
    </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="license.html">
+      %license
+   </license>
 
    <plugin
          id="org.eclipse.libra.facet"
