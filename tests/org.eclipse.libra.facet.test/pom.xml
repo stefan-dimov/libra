@@ -11,7 +11,7 @@
 	
 	<artifactId>org.eclipse.libra.facet.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	<name>Libra Facet Test Plug-in</name>
+	<name>OSGi Bundle Facet Tests Plug-in</name>
 	
 	<build>
 		<plugins>

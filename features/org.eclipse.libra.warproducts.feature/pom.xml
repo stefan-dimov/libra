@@ -11,6 +11,6 @@
 	
 	<artifactId>org.eclipse.libra.warproducts.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
-	<name>WAR Products Core Feature (Incubation)</name>
+	<name>WAR Products Feature</name>
 	
 </project>

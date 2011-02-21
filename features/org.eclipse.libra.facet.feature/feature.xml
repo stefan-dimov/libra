@@ -16,11 +16,12 @@
  -->
 <feature
       id="org.eclipse.libra.facet.feature"
-      label="OSGi Facet Feature"
-      version="0.1.0.qualifier">
+      label="%featureName"
+      version="0.1.0.qualifier"
+      provider-name="%providerName">
 
    <description url="http://www.example.com/description">
-      Libra provides Convert to Web Application Bundle functionality
+      Provides OSGi Bundle facet for projects.
    </description>
 
    <plugin

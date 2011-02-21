@@ -11,7 +11,7 @@
 	
 	<artifactId>org.eclipse.libra.warproducts.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>WAR Products UI (Incubation)</name>
+	<name>WAR Products UI Plug-in</name>
 
 	<build>
 		<plugins>

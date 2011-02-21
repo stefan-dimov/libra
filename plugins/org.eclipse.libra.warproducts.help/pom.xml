@@ -11,6 +11,6 @@
 	
 	<artifactId>org.eclipse.libra.warproducts.help</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>Documentation and HelpContexts for WAR products (Incubation)</name>
+	<name>Documentation and HelpContexts for WAR Products Plug-in</name>
 	
 </project>

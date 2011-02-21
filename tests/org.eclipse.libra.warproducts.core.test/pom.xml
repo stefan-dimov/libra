@@ -11,7 +11,7 @@
   
   <artifactId>org.eclipse.libra.warproducts.core.test</artifactId>
   <packaging>eclipse-test-plugin</packaging>
-  <name>WAR Products core tests (Incubation)</name>
+  <name>WAR Products Core Tests Plug-in</name>
   
   <build>
     <plugins>

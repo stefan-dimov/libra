@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.libra.warproducts.feature"
-      label="WAR Products Core Feature (Incubation)"
-      version="0.1.0.qualifier">
+      label="%featureName"
+      version="0.1.0.qualifier"
+      provider-name="%providerName">
 
    <description url="http://eclipsesource.com">
       The Feature contains all bundles for the WAR product tooling.

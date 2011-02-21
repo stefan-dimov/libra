@@ -11,6 +11,6 @@
 	
 	<artifactId>org.eclipse.libra.facet.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
-	<name>Libra Facet Feature</name>
+	<name>OSGi Bundle Facet Feature</name>
 	
 </project>

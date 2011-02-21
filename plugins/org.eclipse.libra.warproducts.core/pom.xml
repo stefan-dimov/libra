@@ -11,7 +11,7 @@
 	
 	<artifactId>org.eclipse.libra.warproducts.core</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>WAR products core (Incubation)</name>
+	<name>WAR Products Core Plug-in</name>
 
 	<build>
 		<plugins>
