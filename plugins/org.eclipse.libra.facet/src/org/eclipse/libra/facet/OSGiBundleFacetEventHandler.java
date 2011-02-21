@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_PERSISTENCE_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JPA_FACET;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.META_PERSISTENCE_HEADER;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,13 +29,13 @@ public class OSGiBundleFacetEventHandler implements IDelegate {
 	public void execute(IProject project, IProjectFacetVersion fv,
 			Object config, IProgressMonitor monitor) throws CoreException {
 		
-		if ("jpt.jpa".equals(fv.getProjectFacet().getId()) && OSGiBundleUtils.isOSGiBundle(project)) {
+		if (JPA_FACET.equals(fv.getProjectFacet().getId()) && OSGiBundleFacetUtils.isOSGiBundle(project)) {
 			IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 			IBundleProjectDescription bundleProjectDescription = bundleProjectService.getDescription(project);
 			
 			// add the Meta-Persistence manifest header
-			if (null == bundleProjectDescription.getHeader("Meta-Persistence")) {
-				bundleProjectDescription.setHeader("Meta-Persistence", "");
+			if (null == bundleProjectDescription.getHeader(META_PERSISTENCE_HEADER)) {
+				bundleProjectDescription.setHeader(META_PERSISTENCE_HEADER, ""); //$NON-NLS-1$
 			}
 			
 			// add the javax.persistence package import
@@ -39,14 +43,14 @@ public class OSGiBundleFacetEventHandler implements IDelegate {
 			boolean found = false;
 			if (imports != null) {
 				for (IPackageImportDescription imp : imports) {
-					if ("javax.persistence".equals(imp.getName())) {
+					if (JAVAX_PERSISTENCE_PACKAGE.equals(imp.getName())) {
 						found = true;
 						break;
 					}
 				}
 			}
 			if (!found) {
-				IPackageImportDescription imp = bundleProjectService.newPackageImport("javax.persistence", null, false);
+				IPackageImportDescription imp = bundleProjectService.newPackageImport(JAVAX_PERSISTENCE_PACKAGE, null, false);
 				IPackageImportDescription[] newImports;
 				if (imports == null) {
 					newImports = new IPackageImportDescription[1];

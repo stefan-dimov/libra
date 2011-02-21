@@ -35,8 +35,8 @@ public class OSGiBundleFacetUninstallPage extends AbstractFacetWizardPage {
 	public OSGiBundleFacetUninstallPage() {
 		super(WIZARD_PAGE_NAME);
 
-		setTitle("OSGi Bundle");
-        setDescription("Choose uninstall strategy.");
+		setTitle(Messages.OSGiBundleFacetUninstallPage_Title);
+        setDescription(Messages.OSGiBundleFacetUninstallPage_Description);
         setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, IMG_PATH_BUNDLE_WIZBAN));
 	}
 

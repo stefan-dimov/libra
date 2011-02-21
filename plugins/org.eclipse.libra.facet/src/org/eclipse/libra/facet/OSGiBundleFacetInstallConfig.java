@@ -30,7 +30,7 @@ import org.osgi.framework.Version;
 
 public class OSGiBundleFacetInstallConfig extends ActionConfig implements IFacetedProjectListener {
 	
-	private static final String QUALIFIER = "qualifier";
+	private static final String QUALIFIER = "qualifier"; //$NON-NLS-1$
 
 	private IObservableValue symbolicNameValue;
 	private IObservableValue versionValue;
@@ -38,7 +38,7 @@ public class OSGiBundleFacetInstallConfig extends ActionConfig implements IFacet
 	private IObservableValue vendorValue;
 	
 	public OSGiBundleFacetInstallConfig() {
-		Realm realm = OSGiBundleRealm.getRealm();
+		Realm realm = OSGiBundleFacetRealm.getRealm();
 		
 		symbolicNameValue = new WritableValue(realm, getDefaultSymbolicName(), String.class);
 		versionValue = new WritableValue(realm, getDefaultVersion(), String.class);
@@ -204,7 +204,7 @@ public class OSGiBundleFacetInstallConfig extends ActionConfig implements IFacet
 			String symbolicName = (String) value;
 			
 			if (symbolicName == null || symbolicName.trim().length() == 0) {
-				return ValidationStatus.error("Symbolic name cannot be empty.");
+				return ValidationStatus.error(Messages.OSGiBundleFacetInstallConfig_EmptySymbolicName);
 			}
 			
 			return ValidationStatus.ok();
@@ -218,7 +218,7 @@ public class OSGiBundleFacetInstallConfig extends ActionConfig implements IFacet
 			String version = (String) value;
 			
 			if (version == null || version.trim().length() == 0) {
-				return ValidationStatus.error("Version cannot be empty.");
+				return ValidationStatus.error(Messages.OSGiBundleFacetInstallConfig_EmptyVersion);
 			}
 			
 			return ValidationStatus.ok();

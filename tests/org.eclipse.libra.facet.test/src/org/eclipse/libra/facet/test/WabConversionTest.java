@@ -30,7 +30,7 @@ import org.eclipse.libra.facet.Activator;
 import org.eclipse.libra.facet.OSGiBundleFacetInstallConfig;
 import org.eclipse.libra.facet.OSGiBundleFacetUninstallConfig;
 import org.eclipse.libra.facet.OSGiBundleFacetUninstallStrategy;
-import org.eclipse.libra.facet.OSGiBundleUtils;
+import org.eclipse.libra.facet.OSGiBundleFacetUtils;
 import org.eclipse.libra.facet.ui.operations.ConvertProjectsToBundlesOperation;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
@@ -110,7 +110,7 @@ public class WabConversionTest {
 		IProject javaProject = importProjectInWorkspace(JAVA_PRJ_COPY_LOCATION, JAVA_PRJ_COPY_NAME);
     	OSGiBundleFacetInstallConfig osgiBundleFacetInstallConfig = setupOSGiBundleFacetInstallConfig("customSymbolicName", "CustomBundleName", "customVendor", "1.0.1.qualifier");
 		IFacetedProject fproj = ProjectFacetsManager.create(javaProject, true, monitor);
-		fproj.installProjectFacet(OSGiBundleUtils.OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
+		fproj.installProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
     	
     	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
     	IBundleProjectDescription description = bundleProjectService.getDescription(javaProject);
@@ -175,7 +175,7 @@ public class WabConversionTest {
 		
     	OSGiBundleFacetInstallConfig osgiBundleFacetInstallConfig = setupOSGiBundleFacetInstallConfig("customSymbolicName", "CustomBundleName", "customVendor", "1.0.1.qualifier");
 		IFacetedProject fproj = ProjectFacetsManager.create(webProject, true, monitor);
-		fproj.installProjectFacet(OSGiBundleUtils.OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
+		fproj.installProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, osgiBundleFacetInstallConfig, monitor);
     	
     	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
     	IBundleProjectDescription description = bundleProjectService.getDescription(webProject);
@@ -216,10 +216,10 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(webProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
-		fproj.uninstallProjectFacet(OSGiBundleUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(webProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertFalse(hasPluginDependenciesCP(webProject));
-		IFile buildPropertiesFile = webProject.getFile("WebContent/" + OSGiBundleUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = webProject.getFile("WebContent/" + OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 
@@ -229,10 +229,10 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(javaProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
-		fproj.uninstallProjectFacet(OSGiBundleUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(javaProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertFalse(hasPluginDependenciesCP(javaProject));
-		IFile buildPropertiesFile = javaProject.getFile(OSGiBundleUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = javaProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 
@@ -242,10 +242,10 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(pluginProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_ONLY);
-		fproj.uninstallProjectFacet(OSGiBundleUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertTrue(pluginProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		Assert.assertTrue(hasPluginDependenciesCP(pluginProject));
-		IFile buildPropertiesFile = pluginProject.getFile(OSGiBundleUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = pluginProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertTrue(buildPropertiesFile.exists());
 	}
 	
@@ -255,9 +255,9 @@ public class WabConversionTest {
 		IFacetedProject fproj = ProjectFacetsManager.create(simpleProject, true, monitor);
 		OSGiBundleFacetUninstallConfig config = new OSGiBundleFacetUninstallConfig();
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
-		fproj.uninstallProjectFacet(OSGiBundleUtils.OSGI_BUNDLE_FACET_42, config, monitor);
+		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(simpleProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
-		IFile buildPropertiesFile = simpleProject.getFile(OSGiBundleUtils.BUILD_PROPERTIES);
+		IFile buildPropertiesFile = simpleProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 	

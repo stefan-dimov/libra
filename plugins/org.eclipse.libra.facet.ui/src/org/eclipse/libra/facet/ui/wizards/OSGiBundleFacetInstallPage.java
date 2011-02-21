@@ -36,8 +36,8 @@ public class OSGiBundleFacetInstallPage extends AbstractFacetWizardPage {
 	public OSGiBundleFacetInstallPage() {
 		super(WIZARD_PAGE_NAME);
         
-        setTitle("OSGi Bundle");
-        setDescription("Configure bundle metadata. ");
+        setTitle(Messages.OSGiBundleFacetInstallPage_Title);
+        setDescription(Messages.OSGiBundleFacetInstallPage_Description);
         setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, IMG_PATH_BUNDLE_WIZBAN));
 	}
 
@@ -52,7 +52,7 @@ public class OSGiBundleFacetInstallPage extends AbstractFacetWizardPage {
 		Composite container = new Composite(parent, SWT.NONE);
 		
 		Label symbolicNameLabel = new Label(container, SWT.NONE);
-		symbolicNameLabel.setText("&Symbolic name: ");
+		symbolicNameLabel.setText(Messages.OSGiBundleFacetInstallPage_SymbolicName);
 		Text symbolicNameText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		dbc.bindValue(
 				SWTObservables.observeText(symbolicNameText, SWT.Modify), 
@@ -61,7 +61,7 @@ public class OSGiBundleFacetInstallPage extends AbstractFacetWizardPage {
 				null);
 		
 		Label versionLabel = new Label(container, SWT.NONE);
-		versionLabel.setText("&Version: ");
+		versionLabel.setText(Messages.OSGiBundleFacetInstallPage_Version);
 		Text versionText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		dbc.bindValue(
 				SWTObservables.observeText(versionText, SWT.Modify), 
@@ -70,7 +70,7 @@ public class OSGiBundleFacetInstallPage extends AbstractFacetWizardPage {
 				null);
 		
 		Label nameLabel = new Label(container, SWT.NONE);
-		nameLabel.setText("Na&me: ");
+		nameLabel.setText(Messages.OSGiBundleFacetInstallPage_Name);
 		Text nameText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		dbc.bindValue(
 				SWTObservables.observeText(nameText, SWT.Modify), 
@@ -79,7 +79,7 @@ public class OSGiBundleFacetInstallPage extends AbstractFacetWizardPage {
 				null);
 		
 		Label vendorLabel = new Label(container, SWT.NONE);
-		vendorLabel.setText("Ven&dor: ");
+		vendorLabel.setText(Messages.OSGiBundleFacetInstallPage_Vendor);
 		Text vendorText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		dbc.bindValue(
 				SWTObservables.observeText(vendorText, SWT.Modify), 

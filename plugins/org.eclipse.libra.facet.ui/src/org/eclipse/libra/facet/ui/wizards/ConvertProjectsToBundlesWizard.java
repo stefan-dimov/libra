@@ -30,7 +30,7 @@ public class ConvertProjectsToBundlesWizard extends Wizard {
 		this.fSelected = selected;
 		
 //		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
-		setWindowTitle("Convert to OSGi Bundle Projects");
+		setWindowTitle(Messages.ConvertProjectsToBundlesWizard_Title);
 //		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 	}

@@ -12,9 +12,9 @@ package org.eclipse.libra.facet;
 
 public enum OSGiBundleFacetUninstallStrategy {
 	
-	FACET_ONLY("Uninstall the facet only and keep the plugin nature"), 
-	FACET_AND_PLUGIN_NATURE_BUT_NOT_MANIFEST("Uninstall the facet and the plugin nature, but keep the MANIFEST.MF"), 
-	FACET_AND_PLUGIN_NATURE_AND_MANIFEST("Uninstall the facet and the plugin nature, and remove the MANIFEST.MF");
+	FACET_ONLY(Messages.OSGiBundleFacetUninstallStrategy_FacetOnly), 
+	FACET_AND_PLUGIN_NATURE_BUT_NOT_MANIFEST(Messages.OSGiBundleFacetUninstallStrategy_FacetAndPluginNatureButNotManifest), 
+	FACET_AND_PLUGIN_NATURE_AND_MANIFEST(Messages.OSGiBundleFacetUninstallStrategy_FacetAndPluginNatureAndManifest);
 	
 	private final String description;
 	

@@ -27,7 +27,7 @@ import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 
-public class OSGiBundleUninstallDelegate implements IDelegate {
+public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 
 	public void execute(IProject project, IProjectFacetVersion fv,
 			Object configObject, IProgressMonitor monitor) throws CoreException {
@@ -70,14 +70,14 @@ public class OSGiBundleUninstallDelegate implements IDelegate {
 	}
 	
 	private void removeRequiredBundlesClasspathContainer(IProject project, IProgressMonitor monitor) throws CoreException {
-		if (OSGiBundleUtils.isJavaProject(project)) {
+		if (OSGiBundleFacetUtils.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] entries = javaProject.getRawClasspath();
-			if (OSGiBundleUtils.hasRequiredPlugins(entries)) {
+			if (OSGiBundleFacetUtils.hasRequiredPlugins(entries)) {
 				IClasspathEntry[] newEntries = new IClasspathEntry[entries.length - 1];
 				int i = 0;
 				for (IClasspathEntry entry : entries) {
-					if (!OSGiBundleUtils.isRequiredPlugins(entry)) {
+					if (!OSGiBundleFacetUtils.isRequiredPlugins(entry)) {
 						newEntries[i++] = entry;
 					}
 				}
@@ -87,12 +87,12 @@ public class OSGiBundleUninstallDelegate implements IDelegate {
 	}
 
 	private void deleteBuildProperties(IProject project, IProgressMonitor monitor) throws CoreException {
-		IResource buildPropertiesFile = findResource(project, OSGiBundleUtils.BUILD_PROPERTIES);
+		IResource buildPropertiesFile = findResource(project, OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		buildPropertiesFile.delete(IResource.KEEP_HISTORY, monitor);
 	}
 	
 	private void cleanUpManifest(IProject project, IProgressMonitor monitor) throws CoreException {
-		IResource manifestFile = findResource(project, OSGiBundleUtils.MANIFEST_URI);
+		IResource manifestFile = findResource(project, OSGiBundleFacetUtils.MANIFEST_URI);
 		manifestFile.delete(IResource.KEEP_HISTORY, monitor);
 		
 		// delete the META-INF folder if empty
@@ -108,7 +108,7 @@ public class OSGiBundleUninstallDelegate implements IDelegate {
 		IPath bundleRoot = bundleProjectDescription.getBundleRoot();
 		IPath memberPath = bundleRoot;
 		if (memberPath == null) {
-			memberPath = new Path("");
+			memberPath = new Path(""); //$NON-NLS-1$
 		}
 		memberPath = memberPath.append(memberURI);
 		return project.findMember(memberPath);

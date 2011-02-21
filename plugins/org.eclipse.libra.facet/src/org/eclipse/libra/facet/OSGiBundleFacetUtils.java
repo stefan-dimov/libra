@@ -17,20 +17,34 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.wst.common.componentcore.internal.util.IModuleConstants;
 import org.eclipse.wst.common.project.facet.core.FacetedProjectFramework;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
-public class OSGiBundleUtils {
+public class OSGiBundleFacetUtils {
 	
 	public static final String OSGI_BUNDLE = "osgi.bundle"; //$NON-NLS-1$
 	public static final IProjectFacet OSGI_BUNDLE_FACET = ProjectFacetsManager.getProjectFacet(OSGI_BUNDLE);
 	public static final IProjectFacetVersion OSGI_BUNDLE_FACET_42 = OSGI_BUNDLE_FACET.getVersion("4.2"); //$NON-NLS-1$
 	
+	public static final String WEB_FACET = "jst.web"; //$NON-NLS-1$
+	public static final String JPA_FACET = "jpt.jpa"; //$NON-NLS-1$
+	
 	public static final String BUILD_PROPERTIES = "build.properties"; //$NON-NLS-1$
 	public static final String MANIFEST_URI = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+	public static final String WEB_INF_CLASSES = "WEB-INF/classes/"; //$NON-NLS-1$
+	
+	public static final String WEB_CONTEXT_PATH_HEADER = "Web-ContextPath"; //$NON-NLS-1$
+	public static final String META_PERSISTENCE_HEADER = "Meta-Persistence"; //$NON-NLS-1$
+	
+	public static final String JAVAX_SERVLET_PACKAGE = "javax.servlet"; //$NON-NLS-1$
+	public static final String JAVAX_SERVLET_HTTP_PACKAGE = "javax.servlet.http"; //$NON-NLS-1$
+	public static final String JAVAX_SERVLET_JSP_PACKAGE = "javax.servlet.jsp"; //$NON-NLS-1$
+	public static final String JAVAX_SERVLET_JSP_EL_PACKAGE = "javax.servlet.jsp.el"; //$NON-NLS-1$
+	public static final String JAVAX_SERVLET_JSP_TAGEXT_PACKAGE = "javax.servlet.jsp.tagext"; //$NON-NLS-1$
+	public static final String JAVAX_EL_PACKAGE = "javax.el"; //$NON-NLS-1$
+	public static final String JAVAX_PERSISTENCE_PACKAGE = "javax.persistence"; //$NON-NLS-1$
 	
 	public static boolean hasPluginNature(IProject project) throws CoreException {
 		return project.hasNature(IBundleProjectDescription.PLUGIN_NATURE);
@@ -53,11 +67,11 @@ public class OSGiBundleUtils {
 	}
 
 	public static boolean isWebProject(IProject project) throws CoreException {
-		return FacetedProjectFramework.hasProjectFacet(project, IModuleConstants.JST_WEB_MODULE);
+		return FacetedProjectFramework.hasProjectFacet(project, WEB_FACET);
 	}
 
 	public static boolean isJpaProject(IProject project) throws CoreException {
-		return FacetedProjectFramework.hasProjectFacet(project, "jpt.jpa");
+		return FacetedProjectFramework.hasProjectFacet(project, JPA_FACET);
 	}
 	
 	public static boolean isRequiredPlugins(IClasspathEntry entry) {

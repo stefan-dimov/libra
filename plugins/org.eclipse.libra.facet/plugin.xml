@@ -6,10 +6,10 @@
       <project-facet
             id="osgi.bundle">
          <label>
-            OSGi Bundle
+            %osgi.bundle.facet.label
          </label>
          <description>
-            Enables OSGi Bundle nature for projects.
+            %osgi.bundle.facet.description
          </description>
       </project-facet>
       <project-facet-version
@@ -19,7 +19,7 @@
                id="osgi.bundle.install"
                type="install">
             <delegate
-                  class="org.eclipse.libra.facet.OSGiBundleInstallDelegate">
+                  class="org.eclipse.libra.facet.OSGiBundleFacetInstallDelegate">
             </delegate>
             <config-factory
                   class="org.eclipse.libra.facet.OSGiBundleFacetInstallConfigFactory">
@@ -29,7 +29,7 @@
                id="osgi.bundle.uninstall"
                type="uninstall">
             <delegate
-                  class="org.eclipse.libra.facet.OSGiBundleUninstallDelegate">
+                  class="org.eclipse.libra.facet.OSGiBundleFacetUninstallDelegate">
             </delegate>
             <config-factory
                   class="org.eclipse.libra.facet.OSGiBundleFacetUninstallConfigFactory">
@@ -49,10 +49,10 @@
       <static-preset
             id="osgi.java.bundle.preset">
          <label>
-            OSGi Bundle
+            %osgi.java.bundle.preset.label
          </label>
          <description>
-            Configures a Java project as a OSGi Bundle project.
+            %osgi.java.bundle.preset.description
          </description>
          <facet
                id="java"
@@ -66,10 +66,10 @@
       <static-preset
             id="osgi.web.bundle.preset">
          <label>
-            OSGi Web Application Bundle
+            %osgi.web.bundle.preset.label
          </label>
          <description>
-            Configures a Dynamic Web application as a OSGi Web Application Bundle project.
+            %osgi.web.bundle.preset.description
          </description>
          <facet
                id="java"
@@ -87,10 +87,10 @@
       <static-preset
             id="osgi.persistent.bundle.preset">
          <label>
-            OSGi Persistent Bundle
+            %osgi.persistent.bundle.preset.label
          </label>
          <description>
-            Configures a JPA application as a OSGi Persistent Bundle project.
+            %osgi.persistent.bundle.preset.description
          </description>
          <facet
                id="java"

@@ -21,7 +21,7 @@ public class OSGiBundleFacetUninstallConfig extends ActionConfig {
 	private WritableValue[] optionValues;
 	
 	public OSGiBundleFacetUninstallConfig() {
-		Realm realm = OSGiBundleRealm.getRealm();
+		Realm realm = OSGiBundleFacetRealm.getRealm();
 		
 		strategyValue = new SelectObservableValue(realm, OSGiBundleFacetUninstallStrategy.class);
 		optionValues = new WritableValue[OSGiBundleFacetUninstallStrategy.values().length];

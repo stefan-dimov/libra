@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.libra.facet.OSGiBundleUtils;
+import org.eclipse.libra.facet.OSGiBundleFacetUtils;
 import org.eclipse.libra.facet.ui.wizards.ConvertProjectsToBundlesWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -59,7 +59,7 @@ public class ConvertProjectsToBundlesAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		IProject[] unconverted = getUnconvertedProjects();
 		if (unconverted.length == 0) {
-			MessageDialog.openInformation(getDisplay().getActiveShell(), "Find Project to Convert", "There are no projects to convert. "); 
+			MessageDialog.openInformation(getDisplay().getActiveShell(), Messages.ConvertProjectsToBundlesAction_NoProjectToConvertTitle, Messages.ConvertProjectsToBundlesAction_NoProjectToConvertDescription); 
 			return;
 		}
 		
@@ -102,9 +102,9 @@ public class ConvertProjectsToBundlesAction implements IObjectActionDelegate {
 		for (IProject project : projects) {
 			try {
 				if (project.isOpen() && 
-						!OSGiBundleUtils.hasFeatureNature(project) &&
-						!OSGiBundleUtils.hasUpdateSiteNature(project) &&
-						!OSGiBundleUtils.isOSGiBundle(project)) {
+						!OSGiBundleFacetUtils.hasFeatureNature(project) &&
+						!OSGiBundleFacetUtils.hasUpdateSiteNature(project) &&
+						!OSGiBundleFacetUtils.isOSGiBundle(project)) {
 					unconverted.add(project);
 				}
 			} catch (CoreException e) {

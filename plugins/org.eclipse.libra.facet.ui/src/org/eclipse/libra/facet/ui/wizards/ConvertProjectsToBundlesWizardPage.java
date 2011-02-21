@@ -31,7 +31,8 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.libra.facet.OSGiBundleUtils;
+import org.eclipse.libra.facet.OSGiBundleFacetUtils;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -53,7 +54,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 			if (fSelected.size() == 0) {
 				return ValidationStatus.cancel(getDescription());
 			} else if (missingReferences()) {
-				return ValidationStatus.warning("Some of the selected projects have references to other projects, which are not in the selection. Click the Add References button to add them too. ");
+				return ValidationStatus.warning(Messages.ConvertProjectsToBundlesWizardPage_ReferencedProjectsNotSelected);
 			}
 			return ValidationStatus.ok();
 		}
@@ -69,7 +70,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 						try {
 							if (refProject != null && 
 									refProject != project && 
-									!OSGiBundleUtils.isOSGiBundle(refProject) && 
+									!OSGiBundleFacetUtils.isOSGiBundle(refProject) && 
 									!fSelected.contains(refProject)) {
 								return true;
 							}
@@ -88,10 +89,10 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 	private IObservableSet fSelected;
 
 	public ConvertProjectsToBundlesWizardPage(IProject[] unconverted, IProject[] selected) {
-		super("converToWAB");
+		super("converToWAB"); //$NON-NLS-1$
 		
-		setTitle("Select Projects to Convert");
-		setDescription("Select the projects to convert to OSGi Bundle projects.");
+		setTitle(Messages.ConvertProjectsToBundlesWizardPage_Title);
+		setDescription(Messages.ConvertProjectsToBundlesWizardPage_Description);
 		
 		this.fUnconverted = new WritableSet(Arrays.asList(unconverted), IProject.class);
 		this.fSelected = new WritableSet(Arrays.asList(selected), IProject.class);
@@ -117,7 +118,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 		WizardPageSupport.create(this, dbc);
 		
 		Label projectsLabel = new Label(parent, SWT.NONE);
-		projectsLabel.setText("&Available projects: ");
+		projectsLabel.setText(Messages.ConvertProjectsToBundlesWizardPage_AvailableProjects);
 		GridDataFactory.swtDefaults().span(2, 1).applyTo(projectsLabel);
 		
 		final CheckboxTableViewer projectsViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -133,7 +134,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 		GridLayoutFactory.fillDefaults().generateLayout(buttonGroup);
 		
 		Button selectAllButton = new Button(buttonGroup, SWT.PUSH);
-		selectAllButton.setText("&Select All");
+		selectAllButton.setText(Messages.ConvertProjectsToBundlesWizardPage_SelectAll);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fSelected.addAll(fUnconverted);
@@ -142,7 +143,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 		GridDataFactory.fillDefaults().applyTo(selectAllButton);
 		
 		Button deselectAllButton = new Button(buttonGroup, SWT.PUSH);
-		deselectAllButton.setText("&Deselect All");
+		deselectAllButton.setText(Messages.ConvertProjectsToBundlesWizardPage_DeselectAll);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				for (Object o : fUnconverted) {
@@ -154,7 +155,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 		GridDataFactory.fillDefaults().applyTo(deselectAllButton);
 		
 		Button addReferencesButton = new Button(buttonGroup, SWT.PUSH);
-		addReferencesButton.setText("Add &References");
+		addReferencesButton.setText(Messages.ConvertProjectsToBundlesWizardPage_AddReferences);
 		addReferencesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectReferences();
@@ -167,7 +168,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 		dbc.bindValue(SWTObservables.observeText(selectedCountLabel), new ComputedValue(String.class) {
 			@Override
 			protected Object calculate() {
-				return String.format("%d of %d selected.", fSelected.size(), fUnconverted.size());
+				return NLS.bind(Messages.ConvertProjectsToBundlesWizardPage_SelectionCounter, fSelected.size(), fUnconverted.size());
 			}
 		});
 	}
@@ -181,7 +182,7 @@ public class ConvertProjectsToBundlesWizardPage extends WizardPage {
 				for (IVirtualReference ref : references) {
 					IProject refProject = ref.getReferencedComponent().getProject();
 					try {
-						if (refProject != null && refProject != project && !OSGiBundleUtils.isOSGiBundle(refProject)) {
+						if (refProject != null && refProject != project && !OSGiBundleFacetUtils.isOSGiBundle(refProject)) {
 							fSelected.add(refProject);
 						}
 					} catch (CoreException e) {

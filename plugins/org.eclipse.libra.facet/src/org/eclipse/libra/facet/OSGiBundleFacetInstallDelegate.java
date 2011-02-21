@@ -10,6 +10,17 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_EL_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_PERSISTENCE_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_HTTP_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_JSP_EL_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_JSP_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_JSP_TAGEXT_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.JAVAX_SERVLET_PACKAGE;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.META_PERSISTENCE_HEADER;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.WEB_CONTEXT_PATH_HEADER;
+import static org.eclipse.libra.facet.OSGiBundleFacetUtils.WEB_INF_CLASSES;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +56,7 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.osgi.framework.Version;
 
 
-public class OSGiBundleInstallDelegate implements IDelegate {
-	
-	private static final String WEB_INF_CLASSES = "WEB-INF/classes/"; //$NON-NLS-1$
+public class OSGiBundleFacetInstallDelegate implements IDelegate {
 	
 	public void execute(IProject project, IProjectFacetVersion fv,
 			Object configObject, IProgressMonitor monitor) throws CoreException {
@@ -65,7 +74,7 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 
 	private void setBundleRoot(IProject project) throws CoreException {
 		IPath bundleRoot = null;
-		if (OSGiBundleUtils.isWebProject(project)) {
+		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			IVirtualComponent component = ComponentCore.createComponent(project);
 			bundleRoot = component.getRootFolder().getProjectRelativePath();
 		}
@@ -125,10 +134,10 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 	}
 
 	private String[] getLaunchShortcuts(IProject project) throws CoreException {
-		if (OSGiBundleUtils.isWebProject(project)) {
+		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			return new String[] {
-					"org.eclipse.pde.ui.EquinoxLaunchShortcut", 
-					"org.eclipse.wst.server.launchShortcut"
+					"org.eclipse.pde.ui.EquinoxLaunchShortcut",  //$NON-NLS-1$
+					"org.eclipse.wst.server.launchShortcut" //$NON-NLS-1$
 			};
 		}
 		// use default OSGi Framework launchers
@@ -138,12 +147,12 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 	private Map<String, String> getAdditionalHeaders(IProject project) throws CoreException {
 		Map<String, String> headers = new HashMap<String, String>();
 		
-		if (OSGiBundleUtils.isWebProject(project)) {
-			headers.put("Web-ContextPath", getContextRoot(project));
+		if (OSGiBundleFacetUtils.isWebProject(project)) {
+			headers.put(WEB_CONTEXT_PATH_HEADER, getContextRoot(project));
 		}
 		
-		if (OSGiBundleUtils.isJpaProject(project)) {
-			headers.put("Meta-Persistence", "");
+		if (OSGiBundleFacetUtils.isJpaProject(project)) {
+			headers.put(META_PERSISTENCE_HEADER, ""); //$NON-NLS-1$
 		}
 		
 		return headers;
@@ -154,7 +163,7 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 		String contextRoot = component.getMetaProperties().getProperty(IModuleConstants.CONTEXTROOT);
 		// add leading slash if not available
 		if (contextRoot.charAt(0) != '/') {
-			contextRoot = "/" + contextRoot;
+			contextRoot = '/' + contextRoot;
 		}
 		return contextRoot;
 	}
@@ -163,7 +172,7 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 		List<IPackageExportDescription> list = new ArrayList<IPackageExportDescription>();
 		
-		if (OSGiBundleUtils.isJavaProject(project)) {
+		if (OSGiBundleFacetUtils.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IPackageFragmentRoot[] fragmentRoots = javaProject.getAllPackageFragmentRoots();
 			for (IPackageFragmentRoot fragmentRoot : fragmentRoots) {
@@ -196,21 +205,21 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 
 		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 		
-		if (OSGiBundleUtils.isWebProject(project)) {
+		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			// add the most popular servlet packages
-			addPackageImport(packages, "javax.servlet", null, false);
-			addPackageImport(packages, "javax.servlet.http", null, false);
-			addPackageImport(packages, "javax.servlet.jsp", null, false);
-			addPackageImport(packages, "javax.servlet.jsp.el", null, false);
-			addPackageImport(packages, "javax.servlet.jsp.tagext", null, false);
-			addPackageImport(packages, "javax.el", null, false);
+			addPackageImport(packages, JAVAX_SERVLET_PACKAGE, null, false);
+			addPackageImport(packages, JAVAX_SERVLET_HTTP_PACKAGE, null, false);
+			addPackageImport(packages, JAVAX_SERVLET_JSP_PACKAGE, null, false);
+			addPackageImport(packages, JAVAX_SERVLET_JSP_EL_PACKAGE, null, false);
+			addPackageImport(packages, JAVAX_SERVLET_JSP_TAGEXT_PACKAGE, null, false);
+			addPackageImport(packages, JAVAX_EL_PACKAGE, null, false);
 
 			// add packages exported by referenced components
 			IVirtualComponent component = ComponentCore.createComponent(project);
 			IVirtualReference[] references = component.getReferences();
 			for (IVirtualReference ref : references) {
 				IProject refProject = ref.getReferencedComponent().getProject();
-				if (refProject != null && refProject != project && OSGiBundleUtils.hasPluginNature(refProject)) {
+				if (refProject != null && refProject != project && OSGiBundleFacetUtils.hasPluginNature(refProject)) {
 					IPackageExportDescription[] exports = bundleProjectService.getDescription(refProject).getPackageExports();
 					for (IPackageExportDescription export : exports) {
 						String importName = export.getName();
@@ -222,8 +231,8 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 			}
 		}
 		
-		if (OSGiBundleUtils.isJpaProject(project)) {
-			addPackageImport(packages, "javax.persistence", null, false);
+		if (OSGiBundleFacetUtils.isJpaProject(project)) {
+			addPackageImport(packages, JAVAX_PERSISTENCE_PACKAGE, null, false);
 		}
 		
 		return packages.values().toArray(new IPackageImportDescription[packages.size()]);
@@ -241,7 +250,7 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 		IProject project = bundleProjectDescription.getProject();
 		IVirtualComponent component = ComponentCore.createComponent(project);
 		
-		if (OSGiBundleUtils.isWebProject(project)) {
+		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			IPath bundleRoot = component.getRootFolder().getProjectRelativePath();
 			IResource[] resources = project.getFolder(bundleRoot).members();
 			List<IPath> binPaths = new ArrayList<IPath>();
@@ -249,10 +258,10 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 			for (int i = 0; i < resources.length; i++) {
 				String token = resources[i].getName();
 				if (resources[i].getType() == IResource.FOLDER) {
-					token += "/";
+					token += '/';
 				}
 				
-				if (!token.equals(OSGiBundleUtils.BUILD_PROPERTIES)) {
+				if (!token.equals(OSGiBundleFacetUtils.BUILD_PROPERTIES)) {
 					binPaths.add(new Path(token));
 				}
 			}
@@ -268,7 +277,7 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 		IProject project = bundleProjectDescription.getProject();
 		IBundleClasspathEntry[] bundleClasspath = bundleProjectDescription.getBundleClasspath(); 
 		
-		if (OSGiBundleUtils.isWebProject(project)) {
+		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			if (bundleClasspath == null) {
 				IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
@@ -290,10 +299,10 @@ public class OSGiBundleInstallDelegate implements IDelegate {
 	}
 	
 	private void addRequiredPluginsClasspathContainer(IProject project, IProgressMonitor monitor) throws CoreException {
-		if (OSGiBundleUtils.isJavaProject(project)) {
+		if (OSGiBundleFacetUtils.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] entries = javaProject.getRawClasspath();
-			if (!OSGiBundleUtils.hasRequiredPlugins(entries)) {
+			if (!OSGiBundleFacetUtils.hasRequiredPlugins(entries)) {
 				IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
 				for (int i = 0; i < entries.length; i++) {
 					newEntries[i] = entries[i];

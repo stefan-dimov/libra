@@ -12,7 +12,7 @@ package org.eclipse.libra.facet;
 
 import org.eclipse.core.databinding.observable.Realm;
 
-class OSGiBundleRealm {
+class OSGiBundleFacetRealm {
 	
 	private static Realm realm;
 	
