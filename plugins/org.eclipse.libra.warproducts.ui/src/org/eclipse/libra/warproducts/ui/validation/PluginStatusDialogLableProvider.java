@@ -20,7 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class PluginStatusDialogLableProvider extends DefaultLabelProvider {
 
   private static final String VALIDATION_ERROR_IMAGE 
-    = "icons/problem_server.gif";
+    = "icons/problem_server.gif"; //$NON-NLS-1$
 
   public Image getImage( final Object element ) {
     PDELabelProvider pdeLabelProvider 

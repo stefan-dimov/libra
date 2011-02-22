@@ -39,7 +39,7 @@ public class WARProductEditor extends ProductEditor
   implements IValidationListener 
 {
 
-  private static final String PRODUCT_EDITOR_IMAGE = "icons/exp_product.gif";
+  private static final String PRODUCT_EDITOR_IMAGE = "icons/exp_product.gif"; //$NON-NLS-1$
   private static final String WARPRODUCT_FILE_EXTENSION = ".warproduct"; //$NON-NLS-1$
   private WARProductExportAction exportAction;
 

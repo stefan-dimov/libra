@@ -181,7 +181,7 @@ public class WARProduct implements IWARProduct {
       writer.write(  " webXml=\"" + webXmlPath.toPortableString() + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
     if( launchIniPath != null ) {
-      writer.write(  " launchIni=\"" + launchIniPath.toPortableString() 
+      writer.write(  " launchIni=\"" + launchIniPath.toPortableString()  //$NON-NLS-1$
                      + "\"" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
     writer.println( ">" ); //$NON-NLS-1$
