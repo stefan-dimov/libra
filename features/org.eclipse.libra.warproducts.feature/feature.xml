@@ -5,8 +5,8 @@
       version="0.1.0.qualifier"
       provider-name="%providerName">
 
-   <description url="http://eclipsesource.com">
-      The Feature contains all bundles for the WAR product tooling.
+   <description>
+      %description
    </description>
 
    <copyright>
