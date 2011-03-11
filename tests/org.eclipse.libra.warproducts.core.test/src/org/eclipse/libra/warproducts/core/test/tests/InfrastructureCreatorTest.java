@@ -95,6 +95,17 @@ public class InfrastructureCreatorTest extends TestCase {
     assertEquals( expectedContent.toString(), webxmlContent.toString() );
   }
   
+  public void testWebXmlContainsWS() throws IOException, CoreException {
+    InfrastructureCreator icreator = new InfrastructureCreator( tempDir);
+    icreator.createWebXml();
+    IFolder webInf = tempDir.getFolder( "WEB-INF" );
+    IFile webXml = webInf.getFile( "web.xml" );
+    assertTrue( webXml.exists() );
+    StringBuffer webxmlContent = readFile( webXml.getContents( true ) );
+    String actualWebXML = webxmlContent.toString();
+    assertTrue( actualWebXML.indexOf( "-ws rap" ) != -1 );
+  }
+  
   public void testGetWebXmlPath() throws CoreException {
     InfrastructureCreator icreator = new InfrastructureCreator( tempDir);
     icreator.createWebXml();
