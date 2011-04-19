@@ -48,6 +48,7 @@ import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.wst.common.componentcore.ComponentCore;
+import org.eclipse.wst.common.componentcore.internal.util.FacetedProjectUtilities;
 import org.eclipse.wst.common.componentcore.internal.util.IModuleConstants;
 import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;
 import org.eclipse.wst.common.componentcore.resources.IVirtualReference;
@@ -232,7 +233,8 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		}
 		
 		if (OSGiBundleFacetUtils.isJpaProject(project)) {
-			addPackageImport(packages, JAVAX_PERSISTENCE_PACKAGE, null, false);
+			String version = FacetedProjectUtilities.getProjectFacetVersion(project, OSGiBundleFacetUtils.JPA_FACET).getVersionString();
+			addPackageImport(packages, String.format(JAVAX_PERSISTENCE_PACKAGE, version), null, false);
 		}
 		
 		return packages.values().toArray(new IPackageImportDescription[packages.size()]);

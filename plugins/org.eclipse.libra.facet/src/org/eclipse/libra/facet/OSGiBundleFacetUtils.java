@@ -44,7 +44,7 @@ public class OSGiBundleFacetUtils {
 	public static final String JAVAX_SERVLET_JSP_EL_PACKAGE = "javax.servlet.jsp.el"; //$NON-NLS-1$
 	public static final String JAVAX_SERVLET_JSP_TAGEXT_PACKAGE = "javax.servlet.jsp.tagext"; //$NON-NLS-1$
 	public static final String JAVAX_EL_PACKAGE = "javax.el"; //$NON-NLS-1$
-	public static final String JAVAX_PERSISTENCE_PACKAGE = "javax.persistence"; //$NON-NLS-1$
+	public static final String JAVAX_PERSISTENCE_PACKAGE = "javax.persistence;jpa=\"%s\""; //$NON-NLS-1$
 	
 	public static boolean hasPluginNature(IProject project) throws CoreException {
 		return project.hasNature(IBundleProjectDescription.PLUGIN_NATURE);

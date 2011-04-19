@@ -43,6 +43,13 @@
                class="org.eclipse.libra.facet.OSGiBundleFacetEventHandler">
          </delegate>
       </event-handler>
+      <event-handler
+            facet="jpt.jpa"
+            type="POST_VERSION_CHANGE">
+         <delegate
+               class="org.eclipse.libra.facet.OSGiBundleFacetEventHandler">
+         </delegate>
+      </event-handler>
    </extension>
    <extension
          point="org.eclipse.wst.common.project.facet.core.presets">
