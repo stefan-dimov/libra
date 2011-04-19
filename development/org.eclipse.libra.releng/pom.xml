@@ -114,22 +114,22 @@
 	</build>
 	
 	<repositories>
-		<repository>
+		<!-- <repository>
 			<id>indigo</id>
 			<url>http://download.eclipse.org/releases/indigo/</url>
 			<layout>p2</layout>
-		</repository>
+		</repository> -->
 		
-		<!-- <repository>
+		<repository>
 			<id>eclipse-sdk</id>
-			<url>http://download.eclipse.org/eclipse/updates/3.7-I-builds/I20110310-1119/</url>
+			<url>http://download.eclipse.org/eclipse/updates/3.7-I-builds/I20110412-1532/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>emf-sdk</id>
 			<url>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</url>
 			<layout>p2</layout>
-		</repository> -->
+		</repository>
 		<repository>
 			<id>wtp-sdk</id>
 			<url>http://download.eclipse.org/webtools/downloads/drops/R3.3.0/I-3.3.0-20110414085808/repository/</url>
