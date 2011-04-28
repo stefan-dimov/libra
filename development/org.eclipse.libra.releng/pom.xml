@@ -122,7 +122,7 @@
 		
 		<repository>
 			<id>eclipse-sdk</id>
-			<url>http://download.eclipse.org/eclipse/updates/3.7-I-builds/I20110412-1532/</url>
+			<url>http://download.eclipse.org/eclipse/updates/3.7-I-builds/I20110427-0800/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -132,7 +132,7 @@
 		</repository>
 		<repository>
 			<id>wtp-sdk</id>
-			<url>http://download.eclipse.org/webtools/downloads/drops/R3.3.0/I-3.3.0-20110414085808/repository/</url>
+			<url>http://build.eclipse.org/webtools/committers/wtp-R3.3.0-I/20110428060739/I-3.3.0-20110428060739/repository/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
