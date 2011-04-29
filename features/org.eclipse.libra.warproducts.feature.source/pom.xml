@@ -9,18 +9,8 @@
 		<relativePath>../../development/org.eclipse.libra.releng/pom.xml</relativePath>
 	</parent>
 	
-	<artifactId>org.eclipse.libra.repository</artifactId>
-	<packaging>eclipse-update-site</packaging>
-	<name>Libra Update Site</name>
-	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
-				<artifactId>maven-osgi-packaging-plugin</artifactId>
-				<version>${tycho-version}</version>
-			</plugin>
-		</plugins>
-	</build>
+	<artifactId>org.eclipse.libra.warproducts.feature.source</artifactId>
+	<packaging>eclipse-feature</packaging>
+	<name>WAR Products SDK Feature</name>
 	
 </project>

@@ -1,33 +1,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>org.eclipse.libra</groupId>
 	<artifactId>org.eclipse.libra_parent</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Libra Parent POM</name>
-	
+
 	<properties>
-		<tycho-version>0.10.0</tycho-version>
+		<tycho-version>0.11.0</tycho-version>
 		<eclipse-site>http://download.eclipse.org/eclipse/updates/3.7milestones/</eclipse-site>
 		<emf-site>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</emf-site>
 		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
 	</properties>
-	
+
 	<modules>
 		<module>../../plugins/org.eclipse.libra.facet</module>
 		<module>../../plugins/org.eclipse.libra.facet.ui</module>
 		<module>../../features/org.eclipse.libra.facet.feature</module>
+		<module>../../features/org.eclipse.libra.facet.feature.source</module>
 		<module>../../plugins/org.eclipse.libra.warproducts.core</module>
 		<module>../../plugins/org.eclipse.libra.warproducts.ui</module>
 		<module>../../plugins/org.eclipse.libra.warproducts.help</module>
 		<module>../../features/org.eclipse.libra.warproducts.feature</module>
+		<module>../../features/org.eclipse.libra.warproducts.feature.source</module>
 		<module>../org.eclipse.libra.repository</module>
 		<module>../../tests/org.eclipse.libra.facet.test</module>
 		<module>../../tests/org.eclipse.libra.warproducts.core.test</module>
 	</modules>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -45,77 +47,81 @@
 				</configuration>
 			</plugin>
 		</plugins>
- <pluginManagement>
-      <plugins>
-        <plugin>
-          <!-- TODO remove workaround when
-             https://issues.sonatype.org/browse/TYCHO-473
-             is fixed -->
-          <groupId>org.sonatype.tycho</groupId>
-          <artifactId>maven-osgi-source-plugin</artifactId>
-          <version>${tycho-version}</version>
-          <executions>
-            <execution>
-              <id>attach-source</id>
-              <phase>process-classes</phase>
-              <goals>
-                <goal>plugin-source</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.1</version>
-          <configuration>
-            <encoding>ISO-8859-1</encoding>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>2.3.2-SNAPSHOT</version>
-          <configuration>
-            <findbugsXmlOutput>true</findbugsXmlOutput>
-            <failOnError>false</failOnError>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-pmd-plugin</artifactId>
-          <version>2.5</version>
-          <configuration>
-            <sourceEncoding>utf-8</sourceEncoding>
-            <minimumTokens>100</minimumTokens>
-            <targetJdk>1.5</targetJdk>
-            <format>xml</format>
-            <failOnViolation>false</failOnViolation>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>cpd-check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.sonatype.tycho</groupId>
+					<artifactId>maven-osgi-compiler-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.sonatype.tycho</groupId>
+					<artifactId>maven-osgi-source-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<executions>
+						<execution>
+							<id>plugin-source</id>
+							<goals>
+								<goal>plugin-source</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4.1</version>
+					<configuration>
+						<encoding>ISO-8859-1</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.2-SNAPSHOT</version>
+					<configuration>
+						<findbugsXmlOutput>true</findbugsXmlOutput>
+						<failOnError>false</failOnError>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>2.5</version>
+					<configuration>
+						<sourceEncoding>utf-8</sourceEncoding>
+						<minimumTokens>100</minimumTokens>
+						<targetJdk>1.5</targetJdk>
+						<format>xml</format>
+						<failOnViolation>false</failOnViolation>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>cpd-check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-	
+
 	<repositories>
 		<repository>
 			<id>eclipse-sdk</id>
@@ -136,10 +142,10 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-		<!-- need maven-findbugs-2.3.2-SNAPSHOT atm, see http://jira.codehaus.org/browse/MFINDBUGS-122 -->
+			<!-- need maven-findbugs-2.3.2-SNAPSHOT atm, see http://jira.codehaus.org/browse/MFINDBUGS-122 -->
 			<id>codehaus.snapshots</id>
 			<url>http://snapshots.repository.codehaus.org/</url>
 		</pluginRepository>
 	</pluginRepositories>
-	
+
 </project>
