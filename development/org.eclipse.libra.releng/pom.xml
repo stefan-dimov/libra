@@ -10,6 +10,9 @@
 	
 	<properties>
 		<tycho-version>0.10.0</tycho-version>
+		<eclipse-site>http://download.eclipse.org/eclipse/updates/3.7milestones/</eclipse-site>
+		<emf-site>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</emf-site>
+		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
 	</properties>
 	
 	<modules>
@@ -114,25 +117,19 @@
 	</build>
 	
 	<repositories>
-		<!-- <repository>
-			<id>indigo</id>
-			<url>http://download.eclipse.org/releases/indigo/</url>
-			<layout>p2</layout>
-		</repository> -->
-		
 		<repository>
 			<id>eclipse-sdk</id>
-			<url>http://download.eclipse.org/eclipse/updates/3.7-I-builds/I20110427-0800/</url>
+			<url>${eclipse-site}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>emf-sdk</id>
-			<url>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</url>
+			<url>${emf-site}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>wtp-sdk</id>
-			<url>http://build.eclipse.org/webtools/committers/wtp-R3.3.0-I/20110428060739/I-3.3.0-20110428060739/repository/</url>
+			<url>${wtp-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
