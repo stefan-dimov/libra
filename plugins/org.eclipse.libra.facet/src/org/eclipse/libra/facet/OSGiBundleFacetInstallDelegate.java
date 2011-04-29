@@ -111,8 +111,8 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		bundleProjectDescription.setLaunchShortcuts(getLaunchShortcuts(project));
 		
 		Map<String, String> headers = getAdditionalHeaders(project);
-		for (String header : headers.keySet()) {
-			bundleProjectDescription.setHeader(header, headers.get(header));
+		for (Map.Entry<String, String> entry : headers.entrySet()) {
+			bundleProjectDescription.setHeader(entry.getKey(), entry.getValue());
 		}
 		
 		bundleProjectDescription.setPackageExports(getPackageExports(project));

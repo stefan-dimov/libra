@@ -26,8 +26,8 @@ public class ConvertProjectsToBundlesWizard extends Wizard {
 	private ConvertProjectsToBundlesWizardPage mainPage;
 	
 	public ConvertProjectsToBundlesWizard(IProject[] unconverted, IProject[] selected) {
-		this.fUnconverted = unconverted;
-		this.fSelected = selected;
+		this.fUnconverted = unconverted.clone();
+		this.fSelected = selected.clone();
 		
 //		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 		setWindowTitle(Messages.ConvertProjectsToBundlesWizard_Title);

@@ -46,7 +46,7 @@ public class OSGiBundleFacetUninstallConfig extends ActionConfig {
 	}
 	
 	public WritableValue[] getOptionValues() {
-		return optionValues;
+		return optionValues.clone();
 	}
 	
 }

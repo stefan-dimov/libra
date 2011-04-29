@@ -24,7 +24,7 @@ public class ConvertProjectsToBundlesOperation extends WorkspaceModifyOperation 
 	private IProject[] fProjects;
 
 	public ConvertProjectsToBundlesOperation(IProject[] projects) {
-		this.fProjects = projects;
+		this.fProjects = projects.clone();
 	}
 
 	@Override
