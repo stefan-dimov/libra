@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -23,6 +24,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
@@ -57,31 +59,51 @@ public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 		IProjectDescription description = project.getDescription();
 		if (description.hasNature(IBundleProjectDescription.PLUGIN_NATURE)) {
 			String[] natures = description.getNatureIds();
-			String[] newNatures = new String[natures.length - 1];
-			int i = 0;
-			for (String natureId : natures) {
-				if (!natureId.equals(IBundleProjectDescription.PLUGIN_NATURE)) {
-					newNatures[i++] = natureId;
+			for (int i = 0; i < natures.length; i++) {
+				if (natures[i].equals(IBundleProjectDescription.PLUGIN_NATURE)) {
+					String[] newNatures = new String[natures.length - 1];
+					System.arraycopy(natures, 0, newNatures, 0, i);
+					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
+					description.setNatureIds(newNatures);
+					// workaround - see bug 344720
+					removeFromBuildSpec(description, PDE.MANIFEST_BUILDER_ID);
+					removeFromBuildSpec(description, PDE.SCHEMA_BUILDER_ID);
+					// end of workaround
+					project.setDescription(description, IResource.KEEP_HISTORY, monitor);
+					return;
 				}
 			}
-			description.setNatureIds(newNatures);
-			project.setDescription(description, IResource.KEEP_HISTORY, monitor);
 		}
 	}
 	
+	// workaround - see bug 344720
+	private void removeFromBuildSpec(IProjectDescription description, String builderId) {
+		ICommand[] commands = description.getBuildSpec();
+		for (int i = 0; i < commands.length; ++i) {
+			if (commands[i].getBuilderName().equals(builderId)) {
+				ICommand[] newCommands = new ICommand[commands.length - 1];
+				System.arraycopy(commands, 0, newCommands, 0, i);
+				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
+				description.setBuildSpec(newCommands);
+				return;
+			}
+		}
+	}
+
 	private void removeRequiredBundlesClasspathContainer(IProject project, IProgressMonitor monitor) throws CoreException {
 		if (OSGiBundleFacetUtils.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] entries = javaProject.getRawClasspath();
 			if (OSGiBundleFacetUtils.hasRequiredPlugins(entries)) {
-				IClasspathEntry[] newEntries = new IClasspathEntry[entries.length - 1];
-				int i = 0;
-				for (IClasspathEntry entry : entries) {
-					if (!OSGiBundleFacetUtils.isRequiredPlugins(entry)) {
-						newEntries[i++] = entry;
+				for (int i = 0; i < entries.length; i++) {
+					if (OSGiBundleFacetUtils.isRequiredPlugins(entries[i])) {
+						IClasspathEntry[] newEntries = new IClasspathEntry[entries.length - 1];
+						System.arraycopy(entries, 0, newEntries, 0, i);
+						System.arraycopy(entries, i + 1, newEntries, i, entries.length - i - 1);
+						javaProject.setRawClasspath(newEntries, monitor);
+						return;
 					}
 				}
-				javaProject.setRawClasspath(newEntries, monitor);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,6 +39,7 @@ import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
@@ -218,6 +220,8 @@ public class WabConversionTest {
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
 		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(webProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
+		Assert.assertFalse(hasBuildSpec(webProject, PDE.MANIFEST_BUILDER_ID));
+		Assert.assertFalse(hasBuildSpec(webProject, PDE.SCHEMA_BUILDER_ID));
 		Assert.assertFalse(hasPluginDependenciesCP(webProject));
 		IFile buildPropertiesFile = webProject.getFile("WebContent/" + OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
@@ -231,6 +235,8 @@ public class WabConversionTest {
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
 		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(javaProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
+		Assert.assertFalse(hasBuildSpec(javaProject, PDE.MANIFEST_BUILDER_ID));
+		Assert.assertFalse(hasBuildSpec(javaProject, PDE.SCHEMA_BUILDER_ID));
 		Assert.assertFalse(hasPluginDependenciesCP(javaProject));
 		IFile buildPropertiesFile = javaProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
@@ -257,6 +263,8 @@ public class WabConversionTest {
 		config.setStrategy(OSGiBundleFacetUninstallStrategy.FACET_AND_PLUGIN_NATURE_AND_MANIFEST);
 		fproj.uninstallProjectFacet(OSGiBundleFacetUtils.OSGI_BUNDLE_FACET_42, config, monitor);
 		Assert.assertFalse(simpleProject.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
+		Assert.assertFalse(hasBuildSpec(simpleProject, PDE.MANIFEST_BUILDER_ID));
+		Assert.assertFalse(hasBuildSpec(simpleProject, PDE.SCHEMA_BUILDER_ID));
 		IFile buildPropertiesFile = simpleProject.getFile(OSGiBundleFacetUtils.BUILD_PROPERTIES);
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
@@ -365,6 +373,16 @@ public class WabConversionTest {
 		ProjectUnzipUtil util = new ProjectUnzipUtil(new Path(localZipPath), new String[] {projectName});
 		Assert.assertTrue(util.createProjects());
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+	}
+	
+	private boolean hasBuildSpec(IProject project, String builderId) throws CoreException {
+		ICommand[] commands = project.getDescription().getBuildSpec();
+		for (ICommand command : commands) {
+			if (command.getBuilderName().equals(builderId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
