@@ -12,11 +12,10 @@ package org.eclipse.libra.facet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.wst.common.project.facet.core.FacetedProjectFramework;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
@@ -31,7 +30,16 @@ public class OSGiBundleFacetUtils {
 	public static final String WEB_FACET = "jst.web"; //$NON-NLS-1$
 	public static final String JPA_FACET = "jpt.jpa"; //$NON-NLS-1$
 	
+	public static final String FEATURE_NATURE_ID = "org.eclipse.pde.FeatureNature"; //$NON-NLS-1$
+	public static final String SITE_NATURE_ID = "org.eclipse.pde.UpdateSiteNature"; //$NON-NLS-1$
+	public static final String MANIFEST_BUILDER_ID = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
+	public static final String SCHEMA_BUILDER_ID = "org.eclipse.pde.SchemaBuilder"; //$NON-NLS-1$
+	
+	public static final Path REQUIRED_PLUGINS_CONTAINER_PATH = new Path("org.eclipse.pde.core.requiredPlugins"); //$NON-NLS-1$
+	
 	public static final String BUILD_PROPERTIES = "build.properties"; //$NON-NLS-1$
+	public static final String CONTEXTROOT = "context-root"; //$NON-NLS-1$
+	
 	public static final String MANIFEST_URI = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	public static final String WEB_INF_CLASSES = "WEB-INF/classes/"; //$NON-NLS-1$
 	
@@ -51,11 +59,11 @@ public class OSGiBundleFacetUtils {
 	}
 	
 	public static boolean hasFeatureNature(IProject project) throws CoreException {
-		return project.hasNature(PDE.FEATURE_NATURE);
+		return project.hasNature(FEATURE_NATURE_ID);
 	}
 	
 	public static boolean hasUpdateSiteNature(IProject project) throws CoreException {
-		return project.hasNature(PDE.SITE_NATURE);
+		return project.hasNature(SITE_NATURE_ID);
 	}
 	
 	public static boolean isOSGiBundle(IProject project) throws CoreException {
@@ -75,7 +83,7 @@ public class OSGiBundleFacetUtils {
 	}
 	
 	public static boolean isRequiredPlugins(IClasspathEntry entry) {
-		return PDECore.REQUIRED_PLUGINS_CONTAINER_PATH.equals(entry.getPath());
+		return REQUIRED_PLUGINS_CONTAINER_PATH.equals(entry.getPath());
 	}
 	
 	public static boolean hasRequiredPlugins(IClasspathEntry[] entries) {

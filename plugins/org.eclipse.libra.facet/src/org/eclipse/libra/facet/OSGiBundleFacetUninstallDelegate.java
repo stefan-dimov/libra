@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
@@ -66,8 +65,8 @@ public class OSGiBundleFacetUninstallDelegate implements IDelegate {
 					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
 					description.setNatureIds(newNatures);
 					// workaround - see bug 344720
-					removeFromBuildSpec(description, PDE.MANIFEST_BUILDER_ID);
-					removeFromBuildSpec(description, PDE.SCHEMA_BUILDER_ID);
+					removeFromBuildSpec(description, OSGiBundleFacetUtils.MANIFEST_BUILDER_ID);
+					removeFromBuildSpec(description, OSGiBundleFacetUtils.SCHEMA_BUILDER_ID);
 					// end of workaround
 					project.setDescription(description, IResource.KEEP_HISTORY, monitor);
 					return;

@@ -46,10 +46,8 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.wst.common.componentcore.ComponentCore;
 import org.eclipse.wst.common.componentcore.internal.util.FacetedProjectUtilities;
-import org.eclipse.wst.common.componentcore.internal.util.IModuleConstants;
 import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;
 import org.eclipse.wst.common.componentcore.resources.IVirtualReference;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
@@ -118,7 +116,7 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		bundleProjectDescription.setPackageExports(getPackageExports(project));
 		bundleProjectDescription.setPackageImports(getPackageImports(bundleProjectDescription));
 		bundleProjectDescription.setBinIncludes(getBinIncludes(bundleProjectDescription));
-		bundleProjectDescription.setBundleClassath(getBundleClasspath(bundleProjectDescription));
+		bundleProjectDescription.setBundleClasspath(getBundleClasspath(bundleProjectDescription));
 		
 		bundleProjectDescription.apply(monitor);
 	}
@@ -161,7 +159,7 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 
 	private String getContextRoot(IProject project) {
 		IVirtualComponent component = ComponentCore.createComponent(project);
-		String contextRoot = component.getMetaProperties().getProperty(IModuleConstants.CONTEXTROOT);
+		String contextRoot = component.getMetaProperties().getProperty(OSGiBundleFacetUtils.CONTEXTROOT);
 		// add leading slash if not available
 		if (contextRoot.charAt(0) != '/') {
 			contextRoot = '/' + contextRoot;
@@ -306,10 +304,8 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 			IClasspathEntry[] entries = javaProject.getRawClasspath();
 			if (!OSGiBundleFacetUtils.hasRequiredPlugins(entries)) {
 				IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
-				for (int i = 0; i < entries.length; i++) {
-					newEntries[i] = entries[i];
-				}
-				newEntries[newEntries.length - 1] = JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
+				System.arraycopy(entries, 0, newEntries, 0, entries.length);
+				newEntries[newEntries.length - 1] = JavaCore.newContainerEntry(OSGiBundleFacetUtils.REQUIRED_PLUGINS_CONTAINER_PATH);
 				javaProject.setRawClasspath(newEntries, monitor);
 			}
 		}

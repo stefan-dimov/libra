@@ -26,7 +26,7 @@ public class Activator extends Plugin {
 	// The shared instance
 	private static Activator plugin;
 	
-	private ServiceReference ref;
+	private ServiceReference<IBundleProjectService> ref;
 	private IBundleProjectService service;
 	
 	/**
@@ -43,7 +43,7 @@ public class Activator extends Plugin {
 		super.start(context);
 		plugin = this;
 		
-		this.ref = context.getServiceReference(IBundleProjectService.class.getName());
+		this.ref = context.getServiceReference(IBundleProjectService.class);
 		this.service = (IBundleProjectService) context.getService(ref);
 	}
 
