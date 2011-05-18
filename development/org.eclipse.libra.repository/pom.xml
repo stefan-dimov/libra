@@ -1,26 +1,115 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<artifactId>org.eclipse.libra_parent</artifactId>
 		<groupId>org.eclipse.libra</groupId>
 		<version>0.1.0-SNAPSHOT</version>
 		<relativePath>../../development/org.eclipse.libra.releng/pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>org.eclipse.libra.repository</artifactId>
 	<packaging>eclipse-update-site</packaging>
 	<name>Libra Update Site</name>
-	
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.tycho</groupId>
 				<artifactId>maven-osgi-packaging-plugin</artifactId>
 				<version>${tycho-version}</version>
+				<configuration>
+					<publishArtifacts>true</publishArtifacts>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	
+
+	<profiles>
+		<profile>
+			<id>build-server</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.dash.maven</groupId>
+						<artifactId>eclipse-maven-signing-plugin</artifactId>
+						<version>1.0.0</version>
+						<executions>
+							<execution>
+								<id>pack</id>
+								<configuration>
+									<inputFile>${project.build.directory}/${artifactId}.zip</inputFile>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>pack</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>sign</id>
+								<configuration>
+									<inputFile>${project.build.directory}/${artifactId}.zip</inputFile>
+									<signerInputDirectory>/home/data/httpd/download-staging.priv/webtools/libra</signerInputDirectory>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>repack</id>
+								<configuration>
+									<inputFile>${project.build.directory}/${artifactId}.zip</inputFile>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>pack</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>fixCheckSums</id>
+								<configuration>
+									<inputFile>${project.build.directory}/${artifactId}.zip</inputFile>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>fixCheckSums</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete includeemptydirs="false">
+											<fileset
+												dir="/home/data/httpd/download.eclipse.org/libra/nightly">
+												<include name="**" />
+											</fileset>
+										</delete>
+										<copy includeemptydirs="false"
+											todir="/home/data/httpd/download.eclipse.org/libra/nightly">
+											<fileset dir="target/checksumFix">
+												<include name="**" />
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
