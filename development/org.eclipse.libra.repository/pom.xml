@@ -10,14 +10,14 @@
 	</parent>
 
 	<artifactId>org.eclipse.libra.repository</artifactId>
-	<packaging>eclipse-update-site</packaging>
-	<name>Libra Update Site</name>
+	<packaging>eclipse-repository</packaging>
+	<name>Eclipse Libra Repository (Incubation)</name>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.tycho</groupId>
-				<artifactId>maven-osgi-packaging-plugin</artifactId>
+				<artifactId>tycho-p2-publisher-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
 					<publishArtifacts>true</publishArtifacts>
