@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?><!--
+      Copyright (c) 2010 Eteration A.S. and others.
+      All rights reserved. This program and the accompanying materials
+      are made available under the terms of the Eclipse Public License v1.0
+      which accompanies this distribution, and is available at
+      http://www.eclipse.org/legal/epl-v10.html
+     
+      Contributors:
+         Naci Dai and Murat Yener, Eteration A.S. - Initial API and implementation
+ -->
+
+<plugin>
+   <extension-point id="launchBehavior" name="Libra Launch Behavior" schema="schema/launchBehavior.exsd"/>
+
+ <extension
+      point="org.eclipse.pde.ui.osgiFrameworks">
+    <framework
+        id="org.eclipse.libra.framework.meta"
+        launcherDelegate="org.eclipse.libra.framework.core.launching.LaunchConfigurationDelegate"
+        name="OSamI Meta Framework" >
+    </framework>
+  </extension>
+  
+     <extension
+         point="org.eclipse.wst.server.core.moduleFactories">
+      <moduleFactory
+            projects="true"
+            class="org.eclipse.libra.framework.core.module.OsgiModuleDeployableFactory"
+            id="org.eclipse.libra.runtime.internal.deployables.osgi.bundle">
+         <moduleType
+               versions="4.2"
+               types="osgi.bundle">
+         </moduleType>
+      </moduleFactory>
+     </extension>
+</plugin>

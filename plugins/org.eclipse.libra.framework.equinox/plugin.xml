@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?><!--
+      Copyright (c) 2010 Eteration A.S. and others.
+      All rights reserved. This program and the accompanying materials
+      are made available under the terms of the Eclipse Public License v1.0
+      which accompanies this distribution, and is available at
+      http://www.eclipse.org/legal/epl-v10.html
+     
+      Contributors:
+         Naci Dai and Murat Yener, Eteration A.S. - Initial API and implementation
+ -->
+
+<plugin>
+
+   
+   <extension
+         point="org.eclipse.wst.server.core.runtimeTypes">
+
+      <runtimeType
+            id="org.eclipse.libra.framework.equinox.runtimeType.30x"
+            name="%runtimeTypeEquinox30Label"
+            description="%runtimeTypeEquinox30Description"
+            vendor="%osami"
+            version="3.6"
+            class="org.eclipse.libra.framework.equinox.EquinoxFramework">
+            <moduleType
+		         types="osami.bundle"
+		         versions="1.0"/>
+		    <moduleType
+		         types="osgi.bundle"
+		         versions="4.2"/>     
+		    <moduleType
+		         types="java"
+		         versions="1.6"/>  
+		    <moduleType
+		         types="java"
+		         versions="1.5"/>     
+      </runtimeType>
+   </extension>
+
+
+  <extension point="org.eclipse.wst.server.core.runtimeLocators">
+    <runtimeLocator
+       id="org.eclipse.libra.framework.equinox.runtime.locator"
+       typeIds="org.eclipse.libra.framework.equinox.runtimeType.*"
+       class="org.eclipse.libra.framework.core.OSGIFrameworkLocatorDelegate"/>
+  </extension>
+
+  <extension point="org.eclipse.jst.server.core.runtimeClasspathProviders">
+     <runtimeClasspathProvider
+        id="org.eclipse.libra.framework.equinox.runtimeTarget"
+        runtimeTypeIds="org.eclipse.libra.framework.equinox.runtimeType.*"
+        class="org.eclipse.libra.framework.equinox.internal.EquinoxFrameworkClasspathProvider"/>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.wst.server.core.serverTypes">
+      <serverType
+            id="org.eclipse.libra.framework.equinox.serverType.30x"
+            name="%runtimeInstanceTypeEquinox30Label"
+            description="%runtimeInstanceTypeEquinox30Description"
+            supportsRemoteHosts="false"
+            runtime="true"
+            startTimeout="120000"
+            stopTimeout="120000"
+            initialState="stopped"
+            startBeforePublish="false"
+            hasConfiguration="true"
+            launchConfigId="org.eclipse.libra.framework.equinox.launchConfigurationType"
+            runtimeTypeId="org.eclipse.libra.framework.equinox.runtimeType.30x"           
+            class="org.eclipse.libra.framework.equinox.EquinoxFrameworkInstance"
+            behaviourClass="org.eclipse.libra.framework.equinox.internal.EquinoxFrameworkInstanceBehavior">
+      </serverType>
+   </extension>
+
+
+  <extension point="org.eclipse.wst.server.core.serverLocators">
+    <serverLocator
+       id="org.eclipse.libra.framework.equinox.server.locator"
+       supportsRemoteHosts="false"
+       typeIds="org.eclipse.libra.framework.equinox.serverType.*"
+       class="org.eclipse.libra.framework.core.OSGIFrameworkInstanceLocatorDelegate"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.launchableAdapters">
+     <launchableAdapter
+        class="org.eclipse.libra.framework.core.launching.LaunchableAdapterDelegate"
+        id="org.eclipse.libra.framework.equinox.osgi"/>
+  </extension>
+
+  <extension point="org.eclipse.debug.core.sourcePathComputers">
+     <sourcePathComputer
+        id="org.eclipse.libra.framework.equinox.sourcePathComputer"
+        class="org.eclipse.libra.framework.core.internal.debug.OSGIRuntimeSourcePathComputerDelegate"/>
+  </extension>
+
+  <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+     <launchConfigurationType
+        id="org.eclipse.libra.framework.equinox.launchConfigurationType"
+        name="%equinoxLaunchConfigurationType"
+        delegate="org.eclipse.libra.framework.core.launching.LaunchConfigurationDelegate"
+        modes="run, debug, profile"
+        sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+        sourcePathComputerId="org.eclipse.libra.framework.equinox.sourcePathComputer"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.publishTasks">
+     <publishTask
+        id="org.eclipse.libra.framework.equinox.publishTask"
+        typeIds="org.eclipse.libra.framework.equinox.serverType.*"
+        class="org.eclipse.libra.framework.core.publish.PublishTask"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.common.project.facet.core.runtimes">
+    <runtime-component-type
+       id="org.eclipse.libra.framework.equinox.runtimeType"/>
+
+    <runtime-component-version
+       type="org.eclipse.libra.framework.equinox.runtimeType"
+       version="3.6.x"/>
+
+    <adapter>
+      <runtime-component
+         id="org.eclipse.libra.framework.equinox.runtimeType"/>
+      <factory
+         class="org.eclipse.jst.server.core.internal.RuntimeClasspathProvider$Factory"/>
+      <type
+         class="org.eclipse.jst.common.project.facet.core.IClasspathProvider"/>
+    </adapter>
+
+  <supported>
+    <runtime-component id="org.eclipse.libra.framework.equinox.runtimeType"/>
+    <facet id="osgi.bundle" />
+  </supported>
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.defaultFacets">
+    <default-facets>
+    <runtime-component id="org.eclipse.libra.framework.equinox.runtimeType">
+         </runtime-component>
+         <facet
+               id="osgi.bundle" version="4.2">
+         </facet>
+    </default-facets>
+  </extension>
+  
+  <extension point="org.eclipse.jst.server.core.runtimeFacetMappings">
+    <runtimeFacetMapping
+      runtimeTypeId="org.eclipse.libra.framework.equinox.runtimeType.30x"
+      runtime-component="org.eclipse.libra.framework.equinox.runtimeType"
+      version="3.6.x"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.installableRuntimes">
+  
+   <runtime
+      id="org.eclipse.libra.framework.equinox.runtimeType.30x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-2.0.txt"
+      archiveUrl="http://download.eclipse.org/equinox/drops/R-3.6.2-201102101200/equinox-SDK-3.6.2.zip"
+      archivePath="equinox-SDK-3.6.2"
+      os="win32"/>
+   <runtime
+      id="org.eclipse.libra.framework.equinox.runtimeType.30x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-1.1"
+      archiveUrl="http://download.eclipse.org/equinox/drops/R-3.6.2-201102101200/equinox-SDK-3.6.2.zip"
+      archivePath="equinox-SDK-3.6.2"
+      os="linux"/>
+      
+   <runtime
+      id="org.eclipse.libra.framework.equinox.runtimeType.30x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-1.1"
+      archiveUrl="http://download.eclipse.org/equinox/drops/R-3.6.2-201102101200/equinox-SDK-3.6.2.zip"
+      archivePath="equinox-SDK-3.6.2"
+      os="macosx"/>
+  </extension>
+
+
+</plugin>

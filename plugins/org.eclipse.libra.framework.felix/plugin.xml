@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?><!--
+      Copyright (c) 2010 Eteration A.S. and others.
+      All rights reserved. This program and the accompanying materials
+      are made available under the terms of the Eclipse Public License v1.0
+      which accompanies this distribution, and is available at
+      http://www.eclipse.org/legal/epl-v10.html
+     
+      Contributors:
+         Naci Dai and Murat Yener, Eteration A.S. - Initial API and implementation
+ -->
+<plugin>  
+   <extension
+         point="org.eclipse.wst.server.core.runtimeTypes">
+      <runtimeType
+            id="org.eclipse.libra.framework.felix.runtimeType.20x"
+            name="%runtimeTypeFelix20Label"
+            description="%runtimeTypeFelix20Description"
+            vendor="%osami"
+            version="2.0"
+            class="org.eclipse.libra.framework.felix.FelixFramework">
+            <moduleType
+		         types="osami.bundle"
+		         versions="1.0"/>
+		    <moduleType
+		         types="osgi.bundle"
+		         versions="4.2"/>     
+		        <moduleType
+		         types="java"
+		         versions="1.6"/>  
+		    <moduleType
+		         types="java"
+		         versions="1.5"/>
+      </runtimeType>
+      <runtimeType
+            id="org.eclipse.libra.framework.felix.runtimeType.30x"
+            name="%runtimeTypeFelix30Label"
+            description="%runtimeTypeFelix30Description"
+            vendor="%osami"
+            version="2.0"
+            class="org.eclipse.libra.framework.felix.FelixFramework">
+            <moduleType
+		         types="osami.bundle"
+		         versions="1.0"/>
+		    <moduleType
+		         types="osgi.bundle"
+		         versions="4.2"/>     
+		         <moduleType
+		         types="java"
+		         versions="1.6"/> 
+		    <moduleType
+		         types="java"
+		         versions="1.5"/>
+      </runtimeType>
+   </extension>
+
+
+  <extension point="org.eclipse.wst.server.core.runtimeLocators">
+    <runtimeLocator
+       id="org.eclipse.libra.framework.felix.runtime.locator"
+       typeIds="org.eclipse.libra.framework.felix.runtimeType.*"
+       class="org.eclipse.libra.framework.core.OSGIFrameworkLocatorDelegate"/>
+  </extension>
+
+  <extension point="org.eclipse.jst.server.core.runtimeClasspathProviders">
+     <runtimeClasspathProvider
+        id="org.eclipse.libra.framework.felix.runtimeTarget"
+        runtimeTypeIds="org.eclipse.libra.framework.felix.runtimeType.*"
+        class="org.eclipse.libra.framework.felix.internal.FelixRuntimeClasspathProvider"/>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.wst.server.core.serverTypes">
+      <serverType
+            id="org.eclipse.libra.framework.felix.serverType.20x"
+            name="%runtimeInstanceTypeFelix20Label"
+            description="%runtimeInstanceTypeFelix20Description"
+            supportsRemoteHosts="false"
+            runtime="true"
+            startTimeout="120000"
+            stopTimeout="120000"
+            initialState="stopped"
+            startBeforePublish="false"
+            hasConfiguration="true"
+            launchConfigId="org.eclipse.libra.framework.felix.launchConfigurationType"
+            runtimeTypeId="org.eclipse.libra.framework.felix.runtimeType.20x"           
+            class="org.eclipse.libra.framework.felix.FelixFrameworkInstance"
+            behaviourClass="org.eclipse.libra.framework.felix.internal.FelixRuntimeInstanceBehavior">
+      </serverType>
+      <serverType
+            id="org.eclipse.libra.framework.felix.serverType.30x"
+            name="%runtimeInstanceTypeFelix30Label"
+            description="%runtimeInstanceTypeFelix30Description"
+            supportsRemoteHosts="false"
+            runtime="true"
+            startTimeout="120000"
+            stopTimeout="120000"
+            initialState="stopped"
+            startBeforePublish="false"
+            hasConfiguration="true"
+            launchConfigId="org.eclipse.libra.framework.felix.launchConfigurationType"
+            runtimeTypeId="org.eclipse.libra.framework.felix.runtimeType.30x"           
+            class="org.eclipse.libra.framework.felix.FelixFrameworkInstance"
+            behaviourClass="org.eclipse.libra.framework.felix.internal.FelixRuntimeInstanceBehavior">
+      </serverType>
+   </extension>
+
+
+  <extension point="org.eclipse.wst.server.core.serverLocators">
+    <serverLocator
+       id="org.eclipse.libra.framework.felix.server.locator"
+       supportsRemoteHosts="false"
+       typeIds="org.eclipse.libra.framework.felix.serverType.*"
+       class="org.eclipse.libra.framework.core.OSGIFrameworkInstanceLocatorDelegate"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.launchableAdapters">
+     <launchableAdapter
+        class="org.eclipse.libra.framework.core.launching.LaunchableAdapterDelegate"
+        id="org.eclipse.libra.framework.felix.osgi"/>
+  </extension>
+
+  <extension point="org.eclipse.debug.core.sourcePathComputers">
+     <sourcePathComputer
+        id="org.eclipse.libra.framework.felix.sourcePathComputer"
+        class="org.eclipse.libra.framework.core.internal.debug.OSGIRuntimeSourcePathComputerDelegate"/>
+  </extension>
+
+  <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+     <launchConfigurationType
+        id="org.eclipse.libra.framework.felix.launchConfigurationType"
+        name="%felixLaunchConfigurationType"
+        delegate="org.eclipse.libra.framework.core.launching.LaunchConfigurationDelegate"
+        modes="run, debug, profile"
+        sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+        sourcePathComputerId="org.eclipse.libra.framework.felix.sourcePathComputer"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.publishTasks">
+     <publishTask
+        id="org.eclipse.libra.framework.felix.publishTask"
+        typeIds="org.eclipse.libra.framework.felix.serverType.*"
+        class="org.eclipse.libra.framework.core.publish.PublishTask"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.common.project.facet.core.runtimes">
+    <runtime-component-type
+       id="org.eclipse.libra.framework.felix.runtimeType"/>
+
+    <runtime-component-version
+       type="org.eclipse.libra.framework.felix.runtimeType"
+       version="2.0.x"/>
+    <runtime-component-version
+       type="org.eclipse.libra.framework.felix.runtimeType"
+       version="3.0.x"/>
+
+    <adapter>
+      <runtime-component
+         id="org.eclipse.libra.framework.felix.runtimeType"/>
+      <factory
+         class="org.eclipse.jst.server.core.internal.RuntimeClasspathProvider$Factory"/>
+      <type
+         class="org.eclipse.jst.common.project.facet.core.IClasspathProvider"/>
+    </adapter>
+  <supported>
+    <runtime-component id="org.eclipse.libra.framework.felix.runtimeType"/>
+    <facet id="osgi.bundle" />
+  </supported>
+      
+  </extension>
+                    
+  <extension point="org.eclipse.wst.common.project.facet.core.defaultFacets">
+    <default-facets>
+    <runtime-component id="org.eclipse.libra.framework.felix.runtimeType">
+         </runtime-component>
+         <facet
+               id="osgi.bundle" version="4.2">
+         </facet>
+    </default-facets>
+  </extension>
+  
+  <extension point="org.eclipse.jst.server.core.runtimeFacetMappings">
+    <runtimeFacetMapping
+      runtimeTypeId="org.eclipse.libra.framework.felix.runtimeType.20x"
+      runtime-component="org.eclipse.libra.framework.felix.runtimeType"
+      version="2.0.x"/>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.installableRuntimes">
+    <runtime
+      id="org.eclipse.libra.framework.felix.runtimeType.20x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-2.0.txt"
+      archiveUrl="http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-2.0.5.zip"
+      archivePath="org.apache.felix.main.distribution-2.0.5"
+      os="win32"/>
+   <runtime
+      id="org.eclipse.libra.framework.felix.runtimeType.20x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-1.1"
+      archiveUrl="http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-2.0.5.tar.gz"
+      archivePath="org.apache.felix.main.distribution-2.0.5"
+      os="linux"/>
+    <runtime
+      id="org.eclipse.libra.framework.felix.runtimeType.20x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-1.1"
+      archiveUrl="http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-2.0.5.tar.gz"
+      archivePath="org.apache.felix.main.distribution-2.0.5"
+      os="macosx"/>
+   <runtime
+      id="org.eclipse.libra.framework.felix.runtimeType.30x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-2.0.txt"
+      archiveUrl="http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-3.0.4.zip"
+      archivePath="org.apache.felix.main.distribution-3.0.4"
+      os="win32"/>
+   <runtime
+      id="org.eclipse.libra.framework.felix.runtimeType.30x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-1.1"
+      archiveUrl="http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-3.0.4.tar.gz"
+      archivePath="org.apache.felix.main.distribution-3.0.4"
+      os="linux"/>
+   <runtime
+      id="org.eclipse.libra.framework.felix.runtimeType.30x"
+      licenseUrl="http://www.apache.org/licenses/LICENSE-1.1"
+      archiveUrl="http://archive.apache.org/dist/felix/org.apache.felix.main.distribution-3.0.4.tar.gz"
+      archivePath="org.apache.felix.main.distribution-3.0.4"
+      os="macosx"/>      
+  </extension>
+
+</plugin>

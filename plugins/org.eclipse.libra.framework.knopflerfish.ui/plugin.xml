@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!--
+      Copyright (c) 2010 Eteration A.S. and others.
+      All rights reserved. This program and the accompanying materials
+      are made available under the terms of the Eclipse Public License v1.0
+      which accompanies this distribution, and is available at
+      http://www.eclipse.org/legal/epl-v10.html
+     
+      Contributors:
+         Naci Dai and Murat Yener, Eteration A.S. - Initial API and implementation
+ -->
+
+<plugin>
+   <extension point="org.eclipse.wst.server.ui.serverImages">
+      <image
+         id="org.eclipse.libra.framework.knopflerfish.31"
+         icon="icons/obj16/knopflerfish.gif"
+         typeIds="org.eclipse.libra.framework.knopflerfish.serverType.31"/>
+
+      <image
+         id="org.eclipse.libra.framework.knopflerfish.runtimeType.31"
+         icon="icons/obj16/knopflerfish.gif"
+         typeIds="org.eclipse.libra.framework.knopflerfish.runtimeType.31"/>
+
+   </extension>
+   
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+         id="org.eclipse.libra.framework.knopflerfish.ui.propertyTester"
+         namespace="org.eclipse.libra.framework.knopflerfish.ui"
+         properties="hasConfiguration"
+         type="java.lang.Object"
+         class="org.eclipse.libra.framework.knopflerfish.ui.internal.ConfigurationPropertyTester">
+      </propertyTester>
+   </extension>
+
+   <extension point="org.eclipse.wst.server.ui.editorPages">
+      <page
+         id="org.eclipse.libra.framework.knopflerfish.ui.editor.osgimodule"
+         order="20"
+         name="%configurationEditorOSGiModulesPage"
+         typeIds="org.eclipse.libra.framework.knopflerfish.serverType.*"
+         class="org.eclipse.libra.framework.ui.internal.editor.ConfigurationOSGiModuleEditorPart">
+         <enablement>
+           <test property="org.eclipse.libra.framework.knopflerfish.ui.hasConfiguration" value="true"/>
+         </enablement>
+      </page>
+   </extension>
+
+   <extension point="org.eclipse.wst.server.ui.editorPages">
+      <page
+         id="org.eclipse.libra.framework.knopflerfish.ui.editor.osgimodule"
+         order="22"
+         name="Target Platform Profile"
+         typeIds="org.eclipse.libra.framework.knopflerfish.serverType.*"
+         class="org.eclipse.libra.framework.ui.internal.editor.TargetDefinitionEditorPart">
+         <enablement>
+           <test property="org.eclipse.libra.framework.knopflerfish.ui.hasConfiguration" value="true"/>
+         </enablement>
+      </page>
+   </extension>
+
+   <extension point="org.eclipse.wst.server.ui.editorPageSections">
+      <section
+         id="org.eclipse.libra.framework.knopflerfish.editor.instance"
+         order="0"
+         insertionId="org.eclipse.wst.server.editor.overview.left"
+         typeIds="org.eclipse.libra.framework.knopflerfish.serverType.*"
+         class="org.eclipse.libra.framework.ui.internal.editor.FrameworkInstanceLocationEditorSection"/>
+
+   </extension>
+   
+   <extension point="org.eclipse.wst.server.ui.wizardFragments">
+      <fragment
+         id="org.eclipse.libra.framework.knopflerfish.31"
+         typeIds="org.eclipse.libra.framework.knopflerfish.runtimeType.31"
+         class="org.eclipse.libra.framework.ui.OSGIFrameworkWizardFragment"/>
+   </extension>
+
+  <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+    <launchConfigurationTypeImage
+      id="org.eclipse.libra.framework.knopflerfish.31.launchConfig.image"
+      configTypeID="org.eclipse.libra.framework.knopflerfish.launchConfigurationType"
+      icon="icons/obj16/knopflerfish.gif">
+    </launchConfigurationTypeImage>
+  </extension>
+
+  <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+    <launchConfigurationTabGroup
+      id="org.eclipse.libra.framework.knopflerfish.ui.launchConfigurationTabGroup"
+      type="org.eclipse.libra.framework.knopflerfish.launchConfigurationType"
+      class="org.eclipse.libra.framework.ui.GenericOSGILaunchConfigurationTabGroup">
+    </launchConfigurationTabGroup>
+  </extension>
+
+  <extension point="org.eclipse.wst.common.project.facet.ui.images">
+    <image runtime-component-type="org.eclipse.libra.framework.knopflerfish.runtimeType"
+      path="icons/obj16/knopflerfish.gif"/>
+  </extension>
+
+
+
+  <extension point="org.eclipse.ui.popupMenus">
+    <objectContribution
+      adaptable="true"
+      id="org.eclipse.libra.framework.knopflerfish.ui.serveractions"
+      objectClass="org.eclipse.wst.server.core.IServer">
+      <visibility>
+          <objectState name="serverType" value="org.eclipse.libra.framework.knopflerfish.serverType.*"/>
+      </visibility>
+      <action 
+        class="org.eclipse.libra.framework.ui.internal.actions.CleanWorkDirAction"
+        enablesFor="1"
+        id="org.eclipse.libra.framework.knopflerfish.ui.cleanserverworkdir"
+        label="%cleanTomcatWorkDir">
+      </action>
+    </objectContribution>
+    <objectContribution
+      adaptable="true"
+      id="org.eclipse.libra.framework.knopflerfish..ui.serveractions"
+      objectClass="org.eclipse.wst.server.ui.internal.view.servers.ModuleServer">
+      <visibility>
+        <and>
+          <objectState name="serverType" value="org.eclipse.libra.framework.knopflerfish.serverType.*"/>
+          <objectState name="moduleType" value="osami.bundle"/>
+        </and>
+      </visibility>
+      <action
+        class="org.eclipse.libra.framework.ui.internal.actions.CleanWorkDirAction"
+        enablesFor="1"
+        id="org.eclipse.libra.framework.knopflerfish.ui.cleanmoduleworkdir"
+        label="%cleanKnopflerfishModuleWorkDir">
+      </action>
+    </objectContribution>
+  </extension>
+
+  <extension point="org.eclipse.wst.server.core.publishers">
+     <publisher
+        id="org.eclipse.libra.framework.knopflerfish.ui.context"
+        typeIds="org.eclipse.libra.framework.knopflerfish.serverType.*"
+        name="%publisherContextFixLabel"
+        description="%publisherContextFixDescription"
+        order=""
+        class="org.eclipse.libra.framework.ui.internal.ModulePublisherDelegate"/>
+  </extension>
+</plugin>
