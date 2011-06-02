@@ -94,7 +94,7 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 	 * @param excludeArgs
 	 *            Arguments to exclude from the original arguments string
 	 * @param keepActionLast
-	 *            If <b>true</b> the vmArguments are assumed to be Felix program
+	 *            If <b>true</b> the vmArguments are assumed to be Framework program
 	 *            arguments, the last of which is the action to perform which
 	 *            must remain the last argument. This only has an impact if the
 	 *            last vmArg is a simple string argument, like
@@ -334,7 +334,7 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 
 		try {
 			if (Trace.isTraceEnabled())
-				Trace.trace(Trace.FINER, "Stopping Felix");
+				Trace.trace(Trace.FINER, "Stopping OSGi Framework");
 			if (state != IServer.STATE_STOPPED)
 				setServerState(IServer.STATE_STOPPING);
 
@@ -352,7 +352,7 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 			this.terminate();
 
 		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Error stopping Felix", e);
+			Trace.trace(Trace.SEVERE, "Error stopping OSGi Framework", e);
 		}
 	}
 
@@ -366,7 +366,7 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 		try {
 			setServerState(IServer.STATE_STOPPING);
 			if (Trace.isTraceEnabled())
-				Trace.trace(Trace.FINER, "Killing the Felix process");
+				Trace.trace(Trace.FINER, "Killing the OSGi Framework process");
 			ILaunch launch = getServer().getLaunch();
 			if (launch != null) {
 				launch.terminate();
@@ -447,11 +447,10 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 	 */
 	public void setupLaunch(ILaunch launch, String launchMode,
 			IProgressMonitor monitor) throws CoreException {
-		if ("true".equals(launch.getLaunchConfiguration().getAttribute(
-				ATTR_STOP, "false")))
+		if ("true".equals(launch.getLaunchConfiguration().getAttribute(ATTR_STOP, "false")))
 			return;
-		// if (getFelixRuntime() == null)
-		// throw new CoreException(Status.);
+		if (getFramework() == null)
+			throw new CoreException(new Status(IStatus.ERROR, FrameworkCorePlugin.PLUGIN_ID, "Can't launch for OSGi Framework"));
 
 		IStatus status = getFramework().validate();
 		if (status != null && status.getSeverity() == IStatus.ERROR)
@@ -464,12 +463,9 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 		// ping server to check for startup
 		try {
 			String url = "http://" + getServer().getHost();
-			int port = 8888;
-			if (port != 80)
-				url += ":" + port;
-			ping = new PingThread(getServer(), url, -1, this);
+			ping = new PingThread(launch, getServer(), url, -1, this);
 		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Can't ping for Felix startup.");
+			Trace.trace(Trace.SEVERE, "Can't ping for OSGi Framework startup.");
 		}
 	}
 
@@ -482,7 +478,7 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 	 * @return java.lang.String
 	 */
 	public String toString() {
-		return "FelixRuntimeInstance";
+		return "OSGiFrameworkInstance";
 	}
 
 	public void setupLaunchConfiguration(
@@ -728,7 +724,7 @@ public abstract class OSGIFrameworkInstanceBehaviorDelegate extends ServerBehavi
 		FileOutputStream fout = null;
 		try {
 			fout = new FileOutputStream(path.toFile());
-			p.store(fout, "Felix publish data");
+			p.store(fout, "OSGi Framework publish data");
 		} catch (Exception e) {
 			// ignore
 		} finally {

@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.libra.framework.core;
 
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.wst.server.core.IServer;
 
 /**
@@ -33,6 +35,7 @@ public class PingThread {
 	private boolean stop = false;
 	private String url;
 	private IServer server;
+	private ILaunch launch;
 	private OSGIFrameworkInstanceBehaviorDelegate behaviour;
 
 	/**
@@ -40,16 +43,20 @@ public class PingThread {
 	 * 
 	 * @param server
 	 * @param url
-	 * @param maxPings the maximum number of times to try pinging, or -1 to continue forever
+	 * @param maxPings
+	 *            the maximum number of times to try pinging, or -1 to continue
+	 *            forever
 	 * @param behaviour
 	 */
-	public PingThread(IServer server, String url, int maxPings, OSGIFrameworkInstanceBehaviorDelegate behaviour) {
+	public PingThread(ILaunch launch, IServer server, String url, int maxPings,
+			OSGIFrameworkInstanceBehaviorDelegate behaviour) {
 		super();
 		this.server = server;
 		this.url = url;
 		this.maxPings = maxPings;
 		this.behaviour = behaviour;
-		Thread t = new Thread("Felix Ping Thread") {
+		this.launch = launch;
+		Thread t = new Thread("OSGi Framework Launchers Ping Thread") {
 			public void run() {
 				ping();
 			}
@@ -59,8 +66,8 @@ public class PingThread {
 	}
 
 	/**
-	 * Ping the server until it is started. Then set the server
-	 * state to STATE_STARTED.
+	 * Ping the server until it is started. Then set the server state to
+	 * STATE_STARTED.
 	 */
 	protected void ping() {
 		int count = 0;
@@ -69,7 +76,50 @@ public class PingThread {
 		} catch (Exception e) {
 			// ignore
 		}
-		behaviour.setServerStarted();
+
+		while (!stop) {
+			try {
+				if (count == maxPings) {
+					try {
+						server.stop(false);
+					} catch (Exception e) {
+						Trace.trace(Trace.FINEST, "Ping: could not stop server");
+					}
+					stop();
+					break;
+				}
+				count++;
+
+				if (launch.isTerminated()) {
+					behaviour.stop(true);
+					server.stop(true);
+					stop = true;
+					break;
+				} else {
+					Trace.trace(Trace.FINEST, "Ping: pinging " + count);
+					IProcess[] procs = launch.getProcesses();
+					if (procs != null && procs.length > 0) {
+						if (!procs[0].isTerminated()) {
+							behaviour.setServerStarted();
+							stop();
+							break;
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				Trace.trace(Trace.FINEST, "Ping: failed");
+				// pinging failed
+				if (!stop) {
+					try {
+						Thread.sleep(PING_INTERVAL);
+					} catch (InterruptedException e2) {
+
+					}
+				}
+			}
+		}
+
 		stop = true;
 
 	}
