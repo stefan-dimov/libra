@@ -149,20 +149,20 @@
     <runtime
       id="org.eclipse.libra.framework.jonas.runtimeType"
       licenseUrl="http://www.gnu.org/licenses/lgpl-2.1.html"
-      archiveUrl="http://download.forge.objectweb.org/jonas/jonas-full-5.2.0-bin.zip"
-      archivePath="jonas-full-5.3.0-M2"
+      archiveUrl="http://download.forge.objectweb.org/jonas/micro-jonas-5.3.0-M2-bin.zip"
+      archivePath="micro-jonas-5.3.0-M2"
       os="win32"/>
    <runtime
       id="org.eclipse.libra.framework.jonas.runtimeType"
       licenseUrl="http://www.gnu.org/licenses/lgpl-2.1.html"
-      archiveUrl="http://download.forge.objectweb.org/jonas/jonas-full-5.2.0-bin.tar.gz"
-      archivePath="jonas-full-5.3.0-M2"
+      archiveUrl="http://download.forge.objectweb.org/jonas/micro-jonas-5.3.0-M2-bin.tar.gz"
+      archivePath="micro-jonas-5.3.0-M2"
       os="linux"/>
    <runtime
       id="org.eclipse.libra.framework.jonas.runtimeType"
       licenseUrl="http://www.gnu.org/licenses/lgpl-2.1.html"
-      archiveUrl="http://download.forge.objectweb.org/jonas/jonas-full-5.2.0-bin.tar.gz"
-      archivePath="jonas-full-5.3.0-M2"
+      archiveUrl="http://download.forge.objectweb.org/jonas/micro-jonas-5.3.0-M2-bin.tar.gz"
+      archivePath="micro-jonas-5.3.0-M2"
       os="macosx"/>     
   </extension>
   

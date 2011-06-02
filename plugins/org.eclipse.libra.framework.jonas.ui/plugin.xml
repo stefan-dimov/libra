@@ -40,7 +40,7 @@
          id="org.eclipse.libra.framework.jonas.ui.editor.osgimodule"
          order="20"
          name="%configurationEditorOSGiModulesPage"
-         typeIds="org.eclipse.libra.framework.jonas.serverType.*"
+         typeIds="org.eclipse.libra.framework.jonas.serverType"
          class="org.eclipse.libra.framework.ui.internal.editor.ConfigurationOSGiModuleEditorPart">
          <enablement>
            <test property="org.eclipse.libra.framework.jonas.ui.hasConfiguration" value="true"/>
@@ -53,7 +53,7 @@
          id="org.eclipse.libra.framework.jonas.ui.editor.osgimodule"
          order="22"
          name="Target Platform Profile"
-         typeIds="org.eclipse.libra.framework.jonas.serverType.*"
+         typeIds="org.eclipse.libra.framework.jonas.serverType"
          class="org.eclipse.libra.framework.ui.internal.editor.TargetDefinitionEditorPart">
          <enablement>
            <test property="org.eclipse.libra.framework.jonas.ui.hasConfiguration" value="true"/>
@@ -66,7 +66,7 @@
          id="org.eclipse.libra.framework.jonas.editor.instance"
          order="0"
          insertionId="org.eclipse.wst.server.editor.overview.left"
-         typeIds="org.eclipse.libra.framework.jonas.serverType.*"
+         typeIds="org.eclipse.libra.framework.jonas.serverType"
          class="org.eclipse.libra.framework.ui.internal.editor.FrameworkInstanceLocationEditorSection"/>
 
    </extension>
@@ -107,7 +107,7 @@
       id="org.eclipse.libra.framework.jonas.ui.serveractions"
       objectClass="org.eclipse.wst.server.core.IServer">
       <visibility>
-          <objectState name="serverType" value="org.eclipse.libra.framework.jonas.serverType.*"/>
+          <objectState name="serverType" value="org.eclipse.libra.framework.jonas.serverType"/>
       </visibility>
       <action 
         class="org.eclipse.libra.framework.ui.internal.actions.CleanWorkDirAction"
@@ -122,7 +122,7 @@
       objectClass="org.eclipse.wst.server.ui.internal.view.servers.ModuleServer">
       <visibility>
         <and>
-          <objectState name="serverType" value="org.eclipse.libra.framework.jonas.serverType.*"/>
+          <objectState name="serverType" value="org.eclipse.libra.framework.jonas.serverType"/>
           <objectState name="moduleType" value="osami.bundle"/>
         </and>
       </visibility>
@@ -138,7 +138,7 @@
   <extension point="org.eclipse.wst.server.core.publishers">
      <publisher
         id="org.eclipse.libra.framework.jonas.ui.context"
-        typeIds="org.eclipse.libra.framework.jonas.serverType.*"
+        typeIds="org.eclipse.libra.framework.jonas.serverType"
         name="%publisherContextFixLabel"
         description="%publisherContextFixDescription"
         order=""

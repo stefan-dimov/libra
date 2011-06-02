@@ -26,7 +26,7 @@ public class JonasHandler implements IJonasVersionHandler {
 
 	public IStatus verifyInstallPath(IPath location) {
 
-		File f = location.append("conf").toFile();
+		File f = location.append("conf/jonas.properties").toFile();
 		if (f == null || !f.exists())
 			return new Status(IStatus.ERROR, JonasPlugin.PLUGIN_ID, 0,
 					Messages.warningCantReadConfig, null);

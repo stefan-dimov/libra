@@ -81,7 +81,6 @@ public class JonasFramework extends FrameworkDelegate implements
 			return new Status(IStatus.ERROR, JonasPlugin.PLUGIN_ID, 0,
 					Messages.errorJRE, null);
 	
-		
 	
 		File f = getRuntime().getLocation().append("conf").toFile();
 		File[] conf = f.listFiles();
@@ -91,18 +90,6 @@ public class JonasFramework extends FrameworkDelegate implements
 				if (!f.canRead())
 					return new Status(IStatus.WARNING, JonasPlugin.PLUGIN_ID,
 							0, Messages.warningCantReadConfig, null);
-			}
-		}
-	
-	
-		f = getRuntime().getLocation().append("bundle").toFile();
-		File[] bundle = f.listFiles();
-		if (bundle != null) {
-			int size = bundle.length;
-			for (int i = 0; i < size; i++) {
-				if (!f.canRead())
-					return new Status(IStatus.WARNING, JonasPlugin.PLUGIN_ID,
-							0, Messages.warningCantReadBundle, null);
 			}
 		}
 		

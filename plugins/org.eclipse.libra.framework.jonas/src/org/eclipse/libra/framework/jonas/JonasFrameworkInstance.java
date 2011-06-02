@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.libra.framework.jonas;
 
+import java.io.File;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.libra.framework.core.FrameworkInstanceConfiguration;
 import org.eclipse.libra.framework.core.FrameworkInstanceDelegate;
@@ -26,6 +29,7 @@ import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IRuntime;
+import org.apache.tools.ant.DirectoryScanner;
 
 public class JonasFrameworkInstance extends FrameworkInstanceDelegate implements
 		IJonasFrameworkInstance {
@@ -114,17 +118,29 @@ public class JonasFrameworkInstance extends FrameworkInstanceDelegate implements
 
 	@SuppressWarnings("restriction")
 	private IBundleContainer[] getDefaultBundleContainers(IPath installPath) {
-		IBundleContainer[] containers = new IBundleContainer[2];
-		containers[0] = TargetPlatformService.getDefault()
-				.newDirectoryContainer(
-						installPath.append("bin").makeAbsolute()
-								.toPortableString());
-		containers[1] = TargetPlatformService.getDefault()
-				.newDirectoryContainer(
-						installPath.append("bundle").makeAbsolute()
-								.toPortableString());
-		return containers;
-
+		try {
+			DirectoryScanner scanner = new DirectoryScanner();
+			String baseDir = installPath.append("repositories/maven2-internal").toOSString();
+			scanner.setBasedir(baseDir);
+			scanner.setIncludes(new String[]{"**/*.jar"});
+			scanner.scan();
+			String[] bundles = scanner.getIncludedFiles();
+			if(bundles != null && bundles.length>0){
+				IBundleContainer[] containers = new IBundleContainer[bundles.length];
+				int i=0;	
+				for(String b: bundles){
+					File bundle = new File(b);
+					IPath baseDirFile = new Path(baseDir);
+					containers[i] = TargetPlatformService.getDefault().newDirectoryContainer(baseDirFile.append(bundle.getParent()).toOSString());
+					i++;
+				}
+				return containers;
+			}
+		} catch (Throwable t) {
+			// TODO Auto-generated catch block
+			t.printStackTrace();
+		}
+		return new IBundleContainer[0];
 	}
 
 	@SuppressWarnings("restriction")
