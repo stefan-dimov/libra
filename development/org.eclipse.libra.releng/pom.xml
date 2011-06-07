@@ -150,6 +150,17 @@
 			<id>maven.eclipse.org</id>
 			<url>http://maven.eclipse.org/nexus/content/groups/public</url>
 		</pluginRepository>
+		<pluginRepository>
+			<!-- needed for https://bugs.eclipse.org/347591 -->
+			<id>intalio-dash-signing-plugin</id>
+			<url>http://intalio.org/public/maven2</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
 	</pluginRepositories>
 
 </project>
