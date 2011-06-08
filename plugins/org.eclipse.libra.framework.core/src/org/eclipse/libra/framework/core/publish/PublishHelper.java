@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.libra.framework.core.FrameworkInstanceConfiguration;
-import org.eclipse.libra.tools.model.composite.schema.composite.Bundle;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
@@ -53,18 +52,6 @@ public abstract class PublishHelper {
 
 	protected abstract IPath getPublishFolder();
 
-	public String getWorkspaceBundles(FrameworkInstanceConfiguration config,
-			String prefix, String spacer) {
-		StringBuffer buffer = new StringBuffer();
-		String[] paths = getWorkspaceBundlePaths(config);
-		for (int i = 0; i < paths.length; i++) {
-			String path = paths[i];
-			if (buffer.length() > 0)
-				buffer.append(spacer); //$NON-NLS-1$
-			buffer.append(prefix + path);
-		}
-		return buffer.toString();
-	}
 
 	public String getServerModules(List modules, String prefix, String spacer) {
 		StringBuilder builder = new StringBuilder();
@@ -114,27 +101,7 @@ public abstract class PublishHelper {
 		return buffer.toString();
 	}
 
-	public String[] getWorkspaceBundlePaths(FrameworkInstanceConfiguration config) {
-		List<String> all = new ArrayList<String>();
-		IPath publishFolder = getPublishFolder();
-		for (Bundle b : config.getComposite().getGroup1().get(0).getBundle()) {
-			String jarId = b.getId() + "_" + b.getVersion() + ".jar";
-			IPath bundlePath = publishFolder.append(jarId);
-			all.add(bundlePath.toOSString());
 
-		}
-		return all.toArray(new String[all.size()]);
-	}
-
-	public String[] getWorkspaceBundleIds(FrameworkInstanceConfiguration config) {
-		List<String> all = new ArrayList<String>();
-		IPath publishFolder = getPublishFolder();
-		for (Bundle b : config.getComposite().getGroup1().get(0).getBundle()) {
-			all.add(b.getId());
-
-		}
-		return all.toArray(new String[all.size()]);
-	}
 
 	public String[] getTargetBundlePaths(FrameworkInstanceConfiguration config) {
 		List<String> all = new ArrayList<String>();
@@ -197,7 +164,9 @@ public abstract class PublishHelper {
 					IProject project = iModule.getProject();
 
 					IPluginModelBase pmb = PluginRegistry.findModel(project);
-					ModelEntry entry = PluginRegistry.findEntry(pmb
+					ModelEntry entry = null;
+					if(pmb != null)
+					 entry = PluginRegistry.findEntry(pmb
 							.getBundleDescription().getSymbolicName());
 					if (!WorkspaceModelManager.isBinaryProject(project)
 							&& WorkspaceModelManager.isPluginProject(project)) {

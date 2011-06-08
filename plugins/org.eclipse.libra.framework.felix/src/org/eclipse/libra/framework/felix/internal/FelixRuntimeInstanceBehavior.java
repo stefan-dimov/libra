@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.libra.framework.core.FrameworkInstanceConfiguration;
 import org.eclipse.libra.framework.core.OSGIFrameworkInstanceBehaviorDelegate;
 import org.eclipse.libra.framework.core.ProgressUtil;
@@ -29,7 +28,6 @@ import org.eclipse.libra.framework.core.Trace;
 import org.eclipse.libra.framework.felix.FelixFrameworkInstance;
 import org.eclipse.libra.framework.felix.IFelixVersionHandler;
 import org.eclipse.libra.framework.felix.Messages;
-import org.eclipse.libra.tools.model.composite.schema.composite.Bundle;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IServer;
 import org.eclipse.wst.server.core.model.ServerBehaviourDelegate;
@@ -140,7 +138,7 @@ public class FelixRuntimeInstanceBehavior extends
 			
 			publishHelper.exportBundles(modules, felixConfiguration, confDir);
 			getFelixVersionHandler().prepareFrameworkConfigurationFile(confDir,
-					publishHelper.getWorkspaceBundles(felixConfiguration,"reference:file:", " ")+publishHelper.getServerModules(modules,"reference:file:", " " ),
+					publishHelper.getServerModules(modules,"reference:file:", " " ),
 					publishHelper.getTargetBundles(felixConfiguration,"reference:file:", " "));
 
 		} catch (CoreException e) {

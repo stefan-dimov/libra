@@ -169,7 +169,7 @@ public class EquinoxFrameworkInstance extends FrameworkInstanceDelegate implemen
 	}
 
 	private boolean shouldInclude(BundleInfo bundleInfo) {
-		String bundles[] = {"org.eclipse.osgi"};
+		String bundles[] = {"org.eclipse.osgi_"};
 		
 		for (String bundleName : bundles) {
 			if(bundleInfo.getLocation().toString().indexOf(bundleName)>0)

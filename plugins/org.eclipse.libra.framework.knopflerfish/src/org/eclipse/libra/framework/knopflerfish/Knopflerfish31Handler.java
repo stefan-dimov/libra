@@ -172,17 +172,17 @@ public class Knopflerfish31Handler implements IKnopflerfishVersionHandler {
 		}
 		out.println("-startlevel 3");
 		
-		out.println("## Workspace bundles");
-		String wb[] = publishHelper.getWorkspaceBundlePaths(configuration);
-		out.println("-initlevel 4");
-		for (String workspaceBundle : wb) {
-			out.println("-install file:" + workspaceBundle);
-		}
-		for (String workspaceBundle : wb) {
-			out.println("-start file:" + workspaceBundle);
-		}
-
-		out.println("-startlevel 4");
+//		out.println("## Workspace bundles");
+//		String wb[] = publishHelper.getWorkspaceBundlePaths(configuration);
+//		out.println("-initlevel 4");
+//		for (String workspaceBundle : wb) {
+//			out.println("-install file:" + workspaceBundle);
+//		}
+//		for (String workspaceBundle : wb) {
+//			out.println("-start file:" + workspaceBundle);
+//		}
+//
+//		out.println("-startlevel 4");
 		
 //		wb = publishHelper.getWorkspaceBundlePaths(configuration);
 //		for (String workspaceBundle : wb) {

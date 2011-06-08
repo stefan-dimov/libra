@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -37,15 +36,10 @@ import org.eclipse.libra.framework.core.FrameworkInstanceDelegate;
 import org.eclipse.libra.framework.core.IOSGIFrameworkInstance;
 import org.eclipse.libra.framework.core.IOSGIFrameworkWorkingCopy;
 import org.eclipse.libra.framework.core.Trace;
-import org.eclipse.libra.framework.core.internal.command.AddOsgiModuleCommand;
-import org.eclipse.libra.framework.core.internal.command.RemoveOsgiModuleCommand;
 import org.eclipse.libra.framework.ui.ContextIds;
 import org.eclipse.libra.framework.ui.FrameworkUIPlugin;
 import org.eclipse.libra.framework.ui.Messages;
-import org.eclipse.libra.tools.model.composite.schema.composite.Bundle;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -188,49 +182,6 @@ public class ConfigurationOSGiModuleEditorPart extends ServerEditorPart implemen
 		rightPanel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_BEGINNING));
 
-		addBundleProject = toolkit.createButton(rightPanel,
-				Messages.configurationEditorAddOSGIModule, SWT.PUSH);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		addBundleProject.setLayoutData(data);
-		whs.setHelp(addBundleProject,
-				ContextIds.CONFIGURATION_EDITOR_MODULES_ADD_PROJECT);
-
-		addBundleProject.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				PluginSelectionDialog pluginSelectionDialog = 
-					new PluginSelectionDialog(getEditorSite()
-						.getShell(), false, false);
-				pluginSelectionDialog.setTitle("Choose a bundle to add to composite");
-//				OSGIModuleDialog dialog = new OSGIModuleDialog(getEditorSite()
-//						.getShell(), true);
-//				dialog.open();
-				pluginSelectionDialog.open();
-				if (pluginSelectionDialog.getReturnCode() == IDialogConstants.OK_ID) {
-					execute(new AddOsgiModuleCommand(configuration,(IPluginModelBase)pluginSelectionDialog.getFirstResult()));
-				}
-			}
-		});
-
-		remove = toolkit.createButton(rightPanel, Messages.editorRemove,
-				SWT.PUSH);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		remove.setLayoutData(data);
-		remove.setEnabled(false);
-		remove.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (selection < 0)
-					return;
-				TableItem item = osgiBundlesTable.getItem(selection);
-				if (item.getData() != null) {
-					IPluginModelBase module = (IPluginModelBase) item.getData();
-					execute(new RemoveOsgiModuleCommand(configuration, module));
-				} 
-				remove.setEnabled(false);
-				selection = -1;
-			}
-		});
-		whs.setHelp(remove, ContextIds.CONFIGURATION_EDITOR_MODULES_REMOVE);
-
 		form.setContent(section);
 		form.reflow(true);
 
@@ -279,19 +230,6 @@ public class ConfigurationOSGiModuleEditorPart extends ServerEditorPart implemen
 
 		osgiBundlesTable.removeAll();
 		setErrorMessage(null);
-
-		org.eclipse.libra.tools.model.composite.schema.composite.Composite c= configuration.getComposite();
-		
-		for(Bundle b: c.getGroup1().get(0).getBundle()){
-			TableItem item = new TableItem(osgiBundlesTable, SWT.NONE);
-			IPluginModelBase p = PluginRegistry.findModel(b.getId());
-			item.setData(p);
-			item.setText(0,b.getName());
-			item.setText(1,b.getId());
-			item.setText(2,b.getVersion());
-		}
-		addBundleProject.setEnabled(true);
-		remove.setEnabled(true);
 	}
 
 	/**

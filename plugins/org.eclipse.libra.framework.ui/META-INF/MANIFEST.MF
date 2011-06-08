@@ -26,7 +26,6 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.wst.server.ui,
  org.eclipse.pde.core,
  org.eclipse.pde.ui,
- org.eclipse.libra.tools.composite.model;bundle-version="1.0.0",
  org.eclipse.libra.framework.core,
  org.eclipse.gef
 Bundle-ActivationPolicy: lazy

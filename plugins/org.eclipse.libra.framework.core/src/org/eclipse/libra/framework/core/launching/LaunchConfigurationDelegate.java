@@ -16,48 +16,24 @@
 package org.eclipse.libra.framework.core.launching;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jst.server.core.ServerProfilerDelegate;
-import org.eclipse.libra.framework.core.FrameworkCorePlugin;
-import org.eclipse.libra.framework.core.IOSGIFrameworkInstance;
 import org.eclipse.libra.framework.core.OSGIFrameworkInstanceBehaviorDelegate;
 import org.eclipse.libra.framework.core.Trace;
-import org.eclipse.libra.framework.core.internal.command.AddOsgiModuleCommand;
-import org.eclipse.libra.tools.model.composite.schema.composite.Bundle;
-import org.eclipse.libra.tools.model.composite.schema.composite.Group;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
-import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IServer;
 import org.eclipse.wst.server.core.ServerCore;
 import org.eclipse.wst.server.core.ServerUtil;
-import org.eclipse.wst.server.core.internal.Server;
-import org.eclipse.wst.server.ui.internal.wizard.RunOnServerWizard;
 
 
 /**
@@ -73,8 +49,6 @@ public class LaunchConfigurationDelegate extends
 		if (server == null) {
 			Trace.trace(Trace.FINEST,
 					"Launch configuration could not find runtime instance");
-
-			server = getBundleInfoFromRuntimes(configuration, mode, monitor);
 		}
 
 		if (server.shouldPublish() && ServerCore.isAutoPublishing())
@@ -146,79 +120,5 @@ public class LaunchConfigurationDelegate extends
 		}
 	}
 	
-	IServer iserver;
-
-	@SuppressWarnings("restriction")
-	private IServer getBundleInfoFromRuntimes(
-			ILaunchConfiguration configuration, final String mode, final IProgressMonitor monitor)
-			throws CoreException {
-		IServer server=null;
-		String bundleStr=configuration.getAttribute("workspace_bundles", "");
-		String[] bundlesStr=bundleStr.split(",");  
-		Set<IServer> matchedServers=new HashSet<IServer>();
-		Set<Bundle> matchedBundles=new HashSet<Bundle>();
-
-		for (IServer iServer : ServerCore.getServers()) {
-			IOSGIFrameworkInstance iori = (IOSGIFrameworkInstance) iServer.loadAdapter(IOSGIFrameworkInstance.class, null);
-			EList<Group> groups=(iori.getFrameworkInstanceConfiguration().getComposite()).getGroup1();
-			for (Group group : groups) {
-				for (Bundle bundle : group.getBundle()) {
-					for (String bund : bundlesStr) {
-						if (bund.contains(bundle.getId())){
-							matchedBundles.add(bundle);
-							matchedServers.add(iServer);
-						}
-					}
-				}
-			}
-
-		}
-		
-		if (matchedServers.size()!=1){
-			final IModule module=null;
-			 Display.getDefault().syncExec( new Runnable() {  public void run() { 
-				 Shell shell = FrameworkCorePlugin.getDefault().getWorkbench().getDisplay().getShells()[0];
-				 
-				 RunOnServerWizard wizard = new RunOnServerWizard(module, mode, null);
-				 WizardDialog dialog = new WizardDialog(shell, wizard);
-				 if (dialog.open() == Window.CANCEL) {
-					 if (monitor != null)
-						 monitor.setCanceled(true);
-				 }
-				 
-				 try {
-					 Job.getJobManager().join("org.eclipse.wst.server.ui.family", null);
-				 } catch (Exception e) {
-					 Trace.trace(Trace.WARNING, "Error waiting for job", e);
-				 }
-				 
-				 iserver = wizard.getServer();
-			 }});
-			 IPluginModelBase[] plugins= PluginRegistry.getActiveModels();
-			 IOSGIFrameworkInstance iori = (IOSGIFrameworkInstance) iserver.loadAdapter(IOSGIFrameworkInstance.class, null);
-			 for (IPluginModelBase iPluginModelBase : plugins) {
-				for (Bundle bundle : matchedBundles) {
-					if (bundle.getId().equalsIgnoreCase(iPluginModelBase.getBundleDescription().getName())){
-						try {
-							new AddOsgiModuleCommand(iori.getFrameworkInstanceConfiguration(), iPluginModelBase).execute(monitor, null);
-						} catch (ExecutionException e) {
-							Trace.trace(Trace.WARNING, "Error starting "+iPluginModelBase.getBundleDescription().getName(), e);
-						}
-					}
-				}
-			}
-			 iori.getFrameworkInstanceConfiguration().saveComposite();
-			 
-			 server=iserver;
-		}else{
-			server=((IServer)matchedServers.toArray()[0]);
-		}
-		ILaunchConfigurationWorkingCopy wcConfiguration=configuration.getWorkingCopy();
-		wcConfiguration.setAttribute(Server.ATTR_SERVER_ID, server.getId());
-		
-		
-		wcConfiguration.doSave();
-		
-		return server;
-	}
+	
 }

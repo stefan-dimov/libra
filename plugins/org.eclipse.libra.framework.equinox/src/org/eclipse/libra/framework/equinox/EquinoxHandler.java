@@ -35,10 +35,11 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 
 	public IStatus verifyInstallPath(IPath location) {
 		boolean isFound = false;
-		if (location.toFile().exists()) {
-			File[] files = location.toFile().listFiles();
+		IPath plugins = location.append("plugins");
+		if (plugins.toFile().exists()) {
+			File[] files = plugins.toFile().listFiles();
 			for (File file : files) {
-				if (file.getName().indexOf("org.eclipse.osgi") > -1) {
+				if (file.getName().indexOf("org.eclipse.osgi_") > -1) {
 					isFound = true;
 					break;
 				}
@@ -59,12 +60,13 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 	public List getFrameworkClasspath(IPath installPath, IPath configPath) {
 
 		List cp = new ArrayList();
-		if (installPath.toFile().exists()) {
-			File[] files = installPath.toFile().listFiles();
+		IPath plugins = installPath.append("plugins");
+		
+		if (plugins.toFile().exists()) {
+			File[] files = plugins.toFile().listFiles();
 			for (File file : files) {
-				if (file.getName().indexOf("org.eclipse.osgi") > -1) {
-					IPath path = installPath
-							.append(file.getName());
+				if (file.getName().indexOf("org.eclipse.osgi_") > -1) {
+					IPath path = plugins.append(file.getName());
 					cp.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));
 				}
 			}
@@ -149,18 +151,7 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 		return true;
 	}
 
-	private String getEquinoxJar(String path) {
-		File file = null;
-		file = new File(path, "");
-		String[] children = file.list();
-		for (String string : children) {
-			if (string.lastIndexOf("org.eclipse.osgi") > -1) {
-				System.out.println(string);
-				return "/" + string;
-			}
-		}
-		return null;
-	}
+
 
 	public void prepareFrameworkConfigurationFile(IPath configPath,
 			String workspaceBundles, String kernelBundles2) {
@@ -175,7 +166,7 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 
 		String[] krBundles = kernelBundles2.split(" ");
 
-		properties.put("osgi.framework", "file:" + krBundles[0]);
+		properties.put("osgi.framework", krBundles[0]);
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		int start = 4;
 		properties.put(
@@ -213,13 +204,9 @@ public class EquinoxHandler implements IEquinoxVersionHandler {
 			System.err.println("Error: " + e.getMessage());
 		}
 
-//		IPluginModelBase model = PluginRegistry
-//				.findModel("org.eclipse.equinox.simpleconfigurator");
-//		propertyInstall = model.getInstallLocation() + "@1:start,";
-//
-//		// IPluginModelBase modeltest = PluginRegistry.findModel("osgi.cmpn");
-//
-//		krBundles[0] = null;
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.simpleconfigurator");
+		propertyInstall = "reference:file:" + model.getInstallLocation() + "@1:start,";
+
 		for (String string : krBundles) {
 			if (string != null && !(string.trim().equalsIgnoreCase(""))) {
 				File file = new File(string.substring(string.indexOf("/")));

@@ -81,31 +81,8 @@ public class EquinoxFramework extends FrameworkDelegate implements
 			return new Status(IStatus.ERROR, EquinoxPlugin.PLUGIN_ID, 0,
 					Messages.errorJRE, null);
 	
-		
-		//TODO Murat
-		File f = getRuntime().getLocation().append("conf").toFile();
-		File[] conf = f.listFiles();
-		if (conf != null) {
-			int size = conf.length;
-			for (int i = 0; i < size; i++) {
-				if (!f.canRead())
-					return new Status(IStatus.WARNING, EquinoxPlugin.PLUGIN_ID,
-							0, Messages.warningCantReadConfig, null);
-			}
-		}
+
 	
-		//TODO Murat
-		f = getRuntime().getLocation().append("bundle").toFile();
-		File[] bundle = f.listFiles();
-		if (bundle != null) {
-			int size = bundle.length;
-			for (int i = 0; i < size; i++) {
-				if (!f.canRead())
-					return new Status(IStatus.WARNING, EquinoxPlugin.PLUGIN_ID,
-							0, Messages.warningCantReadBundle, null);
-			}
-		}
-		
 		return Status.OK_STATUS;
 	}
 

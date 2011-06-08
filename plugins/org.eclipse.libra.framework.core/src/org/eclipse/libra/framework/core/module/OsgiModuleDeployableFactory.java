@@ -20,14 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.libra.framework.core.IOSGIFrameworkInstance;
 import org.eclipse.libra.framework.core.Trace;
-import org.eclipse.libra.framework.core.internal.command.AddOsgiModuleCommand;
-import org.eclipse.libra.framework.core.internal.dependency.DependencyUtil;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.wst.common.componentcore.ComponentCore;
 import org.eclipse.wst.common.componentcore.internal.resources.VirtualComponent;
 import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;

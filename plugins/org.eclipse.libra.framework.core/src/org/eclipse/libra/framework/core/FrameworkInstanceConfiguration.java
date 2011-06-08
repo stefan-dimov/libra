@@ -17,36 +17,18 @@ package org.eclipse.libra.framework.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.libra.tools.model.composite.schema.composite.Bundle;
-import org.eclipse.libra.tools.model.composite.schema.composite.Composite;
-import org.eclipse.libra.tools.model.composite.schema.composite.CompositeFactory;
-import org.eclipse.libra.tools.model.composite.schema.composite.CompositePackage;
-import org.eclipse.libra.tools.model.composite.schema.composite.DocumentRoot;
-import org.eclipse.libra.tools.model.composite.schema.composite.Group;
-import org.eclipse.libra.tools.model.composite.schema.composite.util.CompositeResourceFactoryImpl;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
@@ -60,7 +42,6 @@ public class FrameworkInstanceConfiguration {
 	
 	protected IFolder configPath;
 	protected ITargetDefinition targetDefinition;
-	protected Composite composite;
 	protected FrameworkInstanceDelegate runtimeInstance;
 	private transient List<PropertyChangeListener> propertyListeners;
 
@@ -72,13 +53,6 @@ public class FrameworkInstanceConfiguration {
 	}
 
 
-	public Composite getComposite() {
-		return composite;
-	}
-
-	public void setComposite(Composite composite) {
-		this.composite = composite;
-	}
 
 	public ITargetDefinition getTargetDefinition() {
 		try {
@@ -106,14 +80,7 @@ public class FrameworkInstanceConfiguration {
 			loadTarget();
 		}
 
-		IPath ws = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		File compositeFile = ws.append(folder.getFullPath()).append("felix.composite")
-				.makeAbsolute().toFile();
-		if (!compositeFile.exists()) {
-			createDefaultComposite(compositeFile);
-		} else {
-			loadDefaultComposite(compositeFile);
-		}
+
 
 	}
 
@@ -138,90 +105,8 @@ public class FrameworkInstanceConfiguration {
 
 	}
 
-	public void saveComposite() {
-		IPath ws = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		File compositeFile = ws.append(getFolder().getFullPath()).append("felix.composite")
-				.makeAbsolute().toFile();
-
-		writeCompositeFile(compositeFile);
-	}
-
-	private void writeCompositeFile(File compositeFile) {
-		try {
-			// Create a resource set to hold the resources.
-			//
-			ResourceSet resourceSet = new ResourceSetImpl();
-
-			// Register the appropriate resource factory to handle all file
-			// extensions.
-			//
-			resourceSet
-					.getResourceFactoryRegistry()
-					.getExtensionToFactoryMap()
-					.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-							new CompositeResourceFactoryImpl());
-
-			resourceSet.getPackageRegistry().put(CompositePackage.eNS_URI,CompositePackage.eINSTANCE);
-			Resource resource = resourceSet.createResource(URI.createURI("http:///My.composite"));
-			DocumentRoot documentRoot = CompositeFactory.eINSTANCE.createDocumentRoot();
-			documentRoot.setComposite(composite);
-			resource.getContents().add(documentRoot);
-			FileOutputStream fos = new FileOutputStream(compositeFile);
-			//resource.save(System.out, null);
-			resource.save(fos, null);
-			
-			IPath tf = new Path(compositeFile.getAbsolutePath());
-			tf.makeAbsolute();
-			IPath wsp =  ResourcesPlugin.getWorkspace().getRoot().getLocation().makeAbsolute();
-			tf = tf.removeFirstSegments(tf.matchingFirstSegments(wsp)).makeAbsolute();
-			tf = tf.removeLastSegments(1);
-			IResource r = ResourcesPlugin.getWorkspace().getRoot().findMember(tf);
-			if(r!= null && r.getProject() != null)
-				r.getProject().refreshLocal(IResource.DEPTH_INFINITE,new NullProgressMonitor());
-		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Cannot write composite file",e);
-		}
-	}
 	
-	private void createDefaultComposite(File targetFile) {
 
-			Composite root = CompositeFactory.eINSTANCE.createComposite();
-			root.setId(runtimeInstance.getServer().getId());
-			root.setName(runtimeInstance.getServer().getName());
-			root.setVersion("1.0");
-			Group g1 = CompositeFactory.eINSTANCE.createGroup();
-			root.getGroup1().add(g1);
-			composite = root;
-			writeCompositeFile(targetFile);
-	}
-
-	private void loadDefaultComposite(File compositeFile) {
-		// Create a resource set to hold the resources.
-		//
-		ResourceSet resourceSet = new ResourceSetImpl();
-
-		// Register the appropriate resource factory to handle all file
-		// extensions.
-		//
-		resourceSet
-				.getResourceFactoryRegistry()
-				.getExtensionToFactoryMap()
-				.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-						new CompositeResourceFactoryImpl());
-
-		// Register the package to ensure it is available during loading.
-		//
-		resourceSet.getPackageRegistry().put(CompositePackage.eNS_URI,
-				CompositePackage.eINSTANCE);
-
-		URI uri = URI.createFileURI(compositeFile.getAbsolutePath());
-
-		Resource resource = resourceSet.getResource(uri, true);
-		DocumentRoot documentRoot = (DocumentRoot) resource.getContents()
-				.get(0);
-		composite = documentRoot.getComposite();
-
-	}
 
 	protected void firePropertyChangeEvent(String propertyName,
 			Object oldValue, Object newValue) {
@@ -350,53 +235,7 @@ public class FrameworkInstanceConfiguration {
 	 * @return java.lang.String
 	 */
 	public String toString() {
-		return "FelixConfiguration[" + getFolder() + "]";
-	}
-
-	public void addOsgiBundle(IPluginModelBase module) {
-		Group group =  composite.getGroup1().get(0);
-		boolean found = false;
-		
-		for(Bundle b: group.getBundle())
-		{
-			if(b.getId().equals(module.getPluginBase().getId())){
-				found = true;
-				break;
-			}
-		}
-		if(!found){
-			Bundle b = CompositeFactory.eINSTANCE.createBundle();
-			b.setId(module.getPluginBase().getId());
-			b.setName(module.getPluginBase().getName());
-			b.setVersion(module.getPluginBase().getVersion());
-			group.getBundle().add(b);
-			firePropertyChangeEvent(ADD_BUNDLE, null, b);
-			this.saveComposite();
-		}
-		
-	}
-
-	public void removeBundle(IPluginModelBase module) {
-		Group group =  composite.getGroup1().get(0);
-		boolean found = false;
-		Bundle fb = null;
-		for(Bundle b: group.getBundle())
-		{
-			if(b.getId().equals(module.getPluginBase().getId())){
-				found = true;
-				fb = b;
-				break;
-			}
-		}
-		if(found){
-			group.getBundle().remove(fb);
-			firePropertyChangeEvent(REMOVE_BUNDLE, fb, null);
-			this.saveComposite();
-		}
-	
+		return "FrameworkInstanceConfiguration[" + getFolder() + "]";
 	}
 	
-	
-	
-
 }

@@ -144,7 +144,7 @@ public class JonasFrameworkInstanceBehavior extends
 			
 			publishHelper.exportBundles(modules, jonasConfiguration, installDir, deployDir);
 			getJonasVersionHandler().prepareFrameworkConfigurationFile(deployDir,
-					publishHelper.getWorkspaceBundles(jonasConfiguration,"reference:file:", " ")+publishHelper.getServerModules(modules,"reference:file:", " " ),
+					publishHelper.getServerModules(modules,"reference:file:", " " ),
 					publishHelper.getTargetBundles(jonasConfiguration,"reference:file:", " "));
 
 		} catch (CoreException e) {

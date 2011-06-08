@@ -135,7 +135,7 @@ public class EquinoxFrameworkInstanceBehavior extends
 			equinoxConfiguration = getEquinoxRuntimeInstance().getEquinoxConfiguration();
 			publishHelper.exportBundles(modules, equinoxConfiguration, confDir);
 			getEquinoxVersionHandler().prepareFrameworkConfigurationFile(confDir,
-					publishHelper.getWorkspaceBundles(equinoxConfiguration,"reference:file:", " ")+publishHelper.getServerModules(modules,"reference:file:", " " ),
+					publishHelper.getServerModules(modules,"reference:file:", " " ),
 					publishHelper.getTargetBundles(equinoxConfiguration,"reference:file:", " "));
 
 		} catch (CoreException e) {
