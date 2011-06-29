@@ -89,12 +89,12 @@
 									<tasks>
 										<delete includeemptydirs="false">
 											<fileset
-												dir="/home/data/httpd/download.eclipse.org/libra/nightly">
+												dir="/home/data/httpd/download.eclipse.org/maintenance/snapshot">
 												<include name="**" />
 											</fileset>
 										</delete>
 										<copy includeemptydirs="false"
-											todir="/home/data/httpd/download.eclipse.org/libra/nightly">
+											todir="/home/data/httpd/download.eclipse.org/maintenance/snapshot">
 											<fileset dir="target/checksumFix">
 												<include name="**" />
 											</fileset>
