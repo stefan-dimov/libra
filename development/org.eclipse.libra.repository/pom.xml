@@ -34,7 +34,6 @@
 					<plugin>
 						<groupId>org.eclipse.dash.maven</groupId>
 						<artifactId>eclipse-maven-signing-plugin</artifactId>
-						<version>1.0.1.2-SNAPSHOT</version>
 						<executions>
 							<execution>
 								<id>pack</id>
