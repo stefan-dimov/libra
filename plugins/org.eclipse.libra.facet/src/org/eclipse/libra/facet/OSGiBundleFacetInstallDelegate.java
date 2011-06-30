@@ -55,6 +55,7 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.osgi.framework.Version;
 
 
+@SuppressWarnings("restriction")
 public class OSGiBundleFacetInstallDelegate implements IDelegate {
 	
 	public void execute(IProject project, IProjectFacetVersion fv,
@@ -147,7 +148,7 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		Map<String, String> headers = new HashMap<String, String>();
 		
 		if (OSGiBundleFacetUtils.isWebProject(project)) {
-			headers.put(WEB_CONTEXT_PATH_HEADER, getContextRoot(project));
+			headers.put(WEB_CONTEXT_PATH_HEADER, OSGiBundleFacetUtils.getContextRootFromWTPModel(project));
 		}
 		
 		if (OSGiBundleFacetUtils.isJpaProject(project)) {
@@ -155,16 +156,6 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		}
 		
 		return headers;
-	}
-
-	private String getContextRoot(IProject project) {
-		IVirtualComponent component = ComponentCore.createComponent(project);
-		String contextRoot = component.getMetaProperties().getProperty(OSGiBundleFacetUtils.CONTEXTROOT);
-		// add leading slash if not available
-		if (contextRoot.charAt(0) != '/') {
-			contextRoot = '/' + contextRoot;
-		}
-		return contextRoot;
 	}
 
 	private IPackageExportDescription[] getPackageExports(IProject project) throws CoreException {
