@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 /**
  * The activator class controls the plug-in life cycle
  */
+@SuppressWarnings("restriction")
 public class Activator extends Plugin {
 
 	// The plug-in ID
@@ -28,6 +35,8 @@ public class Activator extends Plugin {
 	
 	private ServiceReference<IBundleProjectService> ref;
 	private IBundleProjectService service;
+	private IPluginModelListener pdeModelListener;
+	private IResourceChangeListener resChangeListener;
 	
 	/**
 	 * The constructor
@@ -45,6 +54,7 @@ public class Activator extends Plugin {
 		
 		this.ref = context.getServiceReference(IBundleProjectService.class);
 		this.service = (IBundleProjectService) context.getService(ref);
+		addListeners();
 	}
 
 	/*
@@ -52,6 +62,7 @@ public class Activator extends Plugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		removeListeners();
 		context.ungetService(this.ref);
 		
 		plugin = null;
@@ -71,4 +82,47 @@ public class Activator extends Plugin {
 		return service;
 	}
 
+	private void addListeners() {
+		pdeModelListener = OSGiBundleFacetUtils.addPDEModelListener();
+		resChangeListener = OSGiBundleFacetUtils.addResChangeListener();
 }
+	
+	private void removeListeners() {
+		PDECore.getDefault().getModelManager().removePluginModelListener(pdeModelListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resChangeListener);
+	}
+	
+	public static void logError(String msg) {
+        logError(msg, null);
+    }
+
+	/**
+	 * Log the specified exception or error.
+	 */
+	public static void logError(Throwable throwable) {
+		logError(throwable.getLocalizedMessage(), throwable);
+	}
+
+	/**
+	 * Log the specified message and exception or error.
+	 */
+	public static void logError(String msg, Throwable throwable) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, msg, throwable));
+	}
+	
+	/**
+	 * Log the specified status.
+	 */
+	public static void log(IStatus status) {
+		plugin.getLog().log(status);
+    }
+		
+	/**
+	 * Log the specified message and exception or error.
+	 */
+	public static void logInfo(String msg) {
+		log(new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK, msg, null));
+	}
+
+}
+
