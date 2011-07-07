@@ -53,9 +53,11 @@ public class WabConversionTest {
 	private static final NullProgressMonitor monitor = new NullProgressMonitor();
 	private static final String WEB_PRJ_LOCATION = "resources/testWeb.zip_";
 	private static final String JAVA_PRJ_LOCATION = "resources/testJava.zip_";
+	private static final String JPA_PRJ_LOCATION = "resources/testJPA.zip_";
 	private static final String SIMPLE_PRJ_LOCATION = "resources/testSimple.zip_";
 	private static final String WEB_PRJ_NAME = "testWeb";
 	private static final String JAVA_PRJ_NAME = "testJava";
+	private static final String JPA_PRJ_NAME = "testJPA";
 	private static final String SIMPLE_PRJ_NAME = "testSimple";
 	private static final String WEB_REFERRING_JAVA_PRJ_LOCATION = "resources/testWebReferringJava.zip_";
 	private static final String WEB_REFERRING_JAVA_PRJ_NAME = "testWebReferringJava";
@@ -170,6 +172,17 @@ public class WabConversionTest {
 		
     	checkWebProject(webProject, WEB_PRJ_NAME, "TestWeb", null, "1.0.0.qualifier", new String[] {"test", "test1"}, "/" + WEB_PRJ_NAME, description);
 	}
+	
+	@Test
+	public void convertJPAProject() throws Exception {
+		IProject jpaProject = importProjectInWorkspace(JPA_PRJ_LOCATION, JPA_PRJ_NAME);
+    	new ConvertProjectsToBundlesOperation(new IProject[]{jpaProject}).run(monitor);
+    	
+    	IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
+    	IBundleProjectDescription description = bundleProjectService.getDescription(jpaProject);
+		
+    	checkJPAProject(jpaProject, JPA_PRJ_NAME, "TestJPA", null, "1.0.0.qualifier", new String[] {"test"}, description);
+	}
 
 	@Test
 	public void convertWebProjectCustomHeders() throws Exception {
@@ -269,8 +282,8 @@ public class WabConversionTest {
 		Assert.assertFalse(buildPropertiesFile.exists());
 	}
 	
-	private void checkWebProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageImports, String expectedWebContextPath, IBundleProjectDescription description) throws JavaModelException {
-		checkJavaProject(project, expectedSymbolicName, expectedBundleName, expectedVendor, expectedVersion, expectedPackageImports, description);
+	private void checkWebProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageExports, String expectedWebContextPath, IBundleProjectDescription description) throws JavaModelException {
+		checkJavaProject(project, expectedSymbolicName, expectedBundleName, expectedVendor, expectedVersion, expectedPackageExports, description);
 		checkWebPackageImports(description);
 		Assert.assertEquals("2", description.getHeader("Bundle-ManifestVersion"));
 		checkLaunchShortcuts(description);
@@ -283,6 +296,18 @@ public class WabConversionTest {
 		Assert.assertNull(bundleClasspath[0].getBinaryPath());
 		Assert.assertEquals("src/", bundleClasspath[0].getSourcePath().toPortableString());
 		Assert.assertEquals("WEB-INF/classes/", bundleClasspath[0].getLibrary().toPortableString());
+	}
+		
+	private void checkJPAProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageExports, IBundleProjectDescription description) throws JavaModelException {
+		checkJavaProject(project, expectedSymbolicName, expectedBundleName, expectedVendor, expectedVersion, expectedPackageExports, description);
+		checkJPAPackageImports(description);
+		Assert.assertEquals("2", description.getHeader("Bundle-ManifestVersion"));
+		IBundleClasspathEntry[] bundleClasspath = description.getBundleClasspath();
+		Assert.assertEquals(1, bundleClasspath.length);
+		Assert.assertNull(bundleClasspath[0].getBinaryPath());
+		Assert.assertEquals("src/", bundleClasspath[0].getSourcePath().toPortableString());
+		IPath outputFolder = description.getDefaultOutputFolder();
+		Assert.assertEquals("build/classes", outputFolder.toString());
 	}
 
 	private void checkJavaProject(IProject project, String expectedSymbolicName, String expectedBundleName, String expectedVendor, String expectedVersion, String[] expectedPackageExports, IBundleProjectDescription description) throws JavaModelException {
@@ -346,6 +371,15 @@ public class WabConversionTest {
 		Assert.assertTrue(packageImportStrings.contains("javax.servlet.jsp.el"));
 		Assert.assertTrue(packageImportStrings.contains("javax.servlet.jsp.tagext"));
 		Assert.assertTrue(packageImportStrings.contains("javax.el"));
+	}
+	
+	private void checkJPAPackageImports(IBundleProjectDescription description) {
+		IPackageImportDescription[] packageImports = description.getPackageImports();
+		List<String> packageImportStrings = new ArrayList<String>();
+		for (IPackageImportDescription currPackageImportDescription : packageImports) {
+			packageImportStrings.add(currPackageImportDescription.getName());
+		}
+		Assert.assertTrue(packageImportStrings.contains("javax.persistence"));
 	}
 	
 	private OSGiBundleFacetInstallConfig setupOSGiBundleFacetInstallConfig(String symbolicName, String bundleName, String vendor, String version) throws CoreException {
