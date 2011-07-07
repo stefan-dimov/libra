@@ -12,6 +12,7 @@
 		<tycho-version>0.12.0</tycho-version>
 		<eclipse-site>http://download.eclipse.org/eclipse/updates/3.7milestones/</eclipse-site>
 		<emf-site>http://download.eclipse.org/modeling/emf/emf/updates/2.7milestones/</emf-site>
+		<dtp-site>http://download.eclipse.org/datatools/updates/</dtp-site>
 		<wtp-site>http://download.eclipse.org/webtools/repository/indigo/</wtp-site>
 	</properties>
 
@@ -131,6 +132,11 @@
 		<repository>
 			<id>emf-sdk</id>
 			<url>${emf-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>dtp-sdk</id>
+			<url>${dtp-site}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
