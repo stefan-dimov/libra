@@ -40,8 +40,9 @@ public class OSGiBundleFacetUtils {
 	public static final String BUILD_PROPERTIES = "build.properties"; //$NON-NLS-1$
 	public static final String CONTEXTROOT = "context-root"; //$NON-NLS-1$
 	
-	public static final String MANIFEST_URI = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	public static final String WEB_INF_CLASSES = "WEB-INF/classes/"; //$NON-NLS-1$
+	public static final String META_INF = "META-INF"; //$NON-NLS-1$
+	public static final String MANIFEST_URI = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	
 	public static final String WEB_CONTEXT_PATH_HEADER = "Web-ContextPath"; //$NON-NLS-1$
 	public static final String META_PERSISTENCE_HEADER = "Meta-Persistence"; //$NON-NLS-1$
