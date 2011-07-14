@@ -56,24 +56,25 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.osgi.framework.Version;
 
 
+@SuppressWarnings("restriction")
 public class OSGiBundleFacetInstallDelegate implements IDelegate {
-
+	
 	public void execute(IProject project, IProjectFacetVersion fv,
 			Object configObject, IProgressMonitor monitor) throws CoreException {
 		OSGiBundleFacetInstallConfig config = (OSGiBundleFacetInstallConfig) configObject;
 		doExecute(project, config, monitor);
 	}
-
+	
 	private void doExecute(IProject project,
 			OSGiBundleFacetInstallConfig config, IProgressMonitor monitor)
-					throws CoreException {
+			throws CoreException {
 		setBundleRoot(project);
 		createBundleProjectDescription(project, config, monitor);
 		addRequiredPluginsClasspathContainer(project, monitor);
 
 		if (OSGiBundleFacetUtils.isJpaProject(project)) {
 			moveMetaInfToRoot(project, monitor);
-		}
+	}
 	}
 
 	private void setBundleRoot(IProject project) throws CoreException {
@@ -82,47 +83,47 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 			IVirtualComponent component = ComponentCore.createComponent(project);
 			bundleRoot = component.getRootFolder().getProjectRelativePath();
 		}
-
+		
 		if (bundleRoot != null) {
 			IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 			bundleProjectService.setBundleRoot(project, bundleRoot);
 		}
 	}
-
+	
 	private void createBundleProjectDescription(IProject project,
 			OSGiBundleFacetInstallConfig config, IProgressMonitor monitor)
-					throws CoreException {
+			throws CoreException {
 		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 		IBundleProjectDescription bundleProjectDescription = bundleProjectService.getDescription(project);
-
+		
 		bundleProjectDescription.setSymbolicName(config.getSymbolicName());
 		bundleProjectDescription.setBundleVersion(config.getVersion());
-
+		
 		String bundleName = config.getName();
 		if (bundleName != null && bundleName.trim().length() > 0) {
 			bundleProjectDescription.setBundleName(bundleName);
 		}
-
+		
 		String bundleVendor = config.getVendor();
 		if (bundleVendor != null && bundleVendor.trim().length() > 0) {
 			bundleProjectDescription.setBundleVendor(bundleVendor);
 		}
-
+		
 		bundleProjectDescription.setEquinox(true);
 		bundleProjectDescription.setExtensionRegistry(false);
 		bundleProjectDescription.setNatureIds(getNatureIds(bundleProjectDescription));
 		bundleProjectDescription.setLaunchShortcuts(getLaunchShortcuts(project));
-
+		
 		Map<String, String> headers = getAdditionalHeaders(project);
 		for (Map.Entry<String, String> entry : headers.entrySet()) {
 			bundleProjectDescription.setHeader(entry.getKey(), entry.getValue());
 		}
-
+		
 		bundleProjectDescription.setPackageExports(getPackageExports(project));
 		bundleProjectDescription.setPackageImports(getPackageImports(bundleProjectDescription));
 		bundleProjectDescription.setBinIncludes(getBinIncludes(bundleProjectDescription));
 		bundleProjectDescription.setBundleClasspath(getBundleClasspath(bundleProjectDescription));
-
+		
 		bundleProjectDescription.apply(monitor);
 	}
 
@@ -133,7 +134,7 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 			newNatureIds[i] = natureIds[i];
 		}
 		newNatureIds[newNatureIds.length - 1] = IBundleProjectDescription.PLUGIN_NATURE;
-
+		
 		return newNatureIds;
 	}
 
@@ -147,35 +148,25 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		// use default OSGi Framework launchers
 		return null;
 	}
-
+	
 	private Map<String, String> getAdditionalHeaders(IProject project) throws CoreException {
 		Map<String, String> headers = new HashMap<String, String>();
-
+		
 		if (OSGiBundleFacetUtils.isWebProject(project)) {
-			headers.put(WEB_CONTEXT_PATH_HEADER, getContextRoot(project));
+			headers.put(WEB_CONTEXT_PATH_HEADER, OSGiBundleFacetUtils.getContextRootFromWTPModel(project));
 		}
-
+		
 		if (OSGiBundleFacetUtils.isJpaProject(project)) {
 			headers.put(META_PERSISTENCE_HEADER, ""); //$NON-NLS-1$
 		}
-
+		
 		return headers;
-	}
-
-	private String getContextRoot(IProject project) {
-		IVirtualComponent component = ComponentCore.createComponent(project);
-		String contextRoot = component.getMetaProperties().getProperty(OSGiBundleFacetUtils.CONTEXTROOT);
-		// add leading slash if not available
-		if (contextRoot.charAt(0) != '/') {
-			contextRoot = '/' + contextRoot;
-		}
-		return contextRoot;
 	}
 
 	private IPackageExportDescription[] getPackageExports(IProject project) throws CoreException {
 		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 		List<IPackageExportDescription> list = new ArrayList<IPackageExportDescription>();
-
+		
 		if (OSGiBundleFacetUtils.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IPackageFragmentRoot[] fragmentRoots = javaProject.getAllPackageFragmentRoots();
@@ -191,14 +182,14 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 				}
 			}
 		}
-
+		
 		return list.toArray(new IPackageExportDescription[list.size()]);
 	}
 
 	private IPackageImportDescription[] getPackageImports(IBundleProjectDescription bundleProjectDescription) throws CoreException {
 		IProject project = bundleProjectDescription.getProject();
 		Map<String, IPackageImportDescription> packages = new TreeMap<String, IPackageImportDescription>();
-
+		
 		// look for existing package imports
 		IPackageImportDescription[] imports = bundleProjectDescription.getPackageImports();
 		if (imports != null) {
@@ -208,7 +199,7 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		}
 
 		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-
+		
 		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			// add the most popular servlet packages
 			addPackageImport(packages, JAVAX_SERVLET_PACKAGE, null, false);
@@ -234,14 +225,15 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 				}
 			}
 		}
+		
 		if (OSGiBundleFacetUtils.isJpaProject(project)) {
 			String version = FacetedProjectUtilities.getProjectFacetVersion(project, OSGiBundleFacetUtils.JPA_FACET).getVersionString();
 			addPackageImport(packages, String.format(JAVAX_PERSISTENCE_PACKAGE, version), null, false);
 		}
-
+		
 		return packages.values().toArray(new IPackageImportDescription[packages.size()]);
 	}
-
+	
 	private void addPackageImport(Map<String, IPackageImportDescription> packages, String importName, VersionRange range, boolean optional) {
 		IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
 		if (!packages.containsKey(importName)) {
@@ -249,27 +241,27 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 			packages.put(importName, imp);
 		}
 	}
-
+	
 	private IPath[] getBinIncludes(IBundleProjectDescription bundleProjectDescription) throws CoreException {
 		IProject project = bundleProjectDescription.getProject();
 		IVirtualComponent component = ComponentCore.createComponent(project);
-
+		
 		if (OSGiBundleFacetUtils.isWebProject(project)) {
 			IPath bundleRoot = component.getRootFolder().getProjectRelativePath();
 			IResource[] resources = project.getFolder(bundleRoot).members();
 			List<IPath> binPaths = new ArrayList<IPath>();
-
+			
 			for (int i = 0; i < resources.length; i++) {
 				String token = resources[i].getName();
 				if (resources[i].getType() == IResource.FOLDER) {
 					token += '/';
 				}
-
+				
 				if (!token.equals(OSGiBundleFacetUtils.BUILD_PROPERTIES)) {
 					binPaths.add(new Path(token));
 				}
 			}
-
+			
 			return binPaths.toArray(new IPath[binPaths.size()]);
 		} else {
 			// don't modify bin.includes by default
@@ -281,27 +273,27 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 		IProject project = bundleProjectDescription.getProject();
 		IBundleClasspathEntry[] bundleClasspath = bundleProjectDescription.getBundleClasspath(); 
 		
-		IJavaProject javaProject = JavaCore.create(project);
-		if (bundleClasspath == null) {
-			IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
-			
-			IPath source = getRelativePath(project, getJavaSourceFolderPaths(javaProject)[0]);
-			IPath binary = getRelativePath(project, javaProject.getOutputLocation());
+			IJavaProject javaProject = JavaCore.create(project);
+			if (bundleClasspath == null) {
+				IBundleProjectService bundleProjectService = Activator.getDefault().getBundleProjectService();
+				
+				IPath source = getRelativePath(project, getJavaSourceFolderPaths(javaProject)[0]);
+				IPath binary = getRelativePath(project, javaProject.getOutputLocation());
 			IPath library = (OSGiBundleFacetUtils.isWebProject(project)) 
 					? new Path(WEB_INF_CLASSES) 	// add WEB-INF/classes for WABs
 					: null; 						// add . for other OSGi bundles
-			
+				
 			IBundleClasspathEntry classpath = bundleProjectService.newBundleClasspathEntry(
-					source, binary, library);
+						source, binary, library);
 			bundleClasspath = new IBundleClasspathEntry[] { classpath };
-		} else {
-			// TODO
-		}
+			} else {
+				// TODO
+			}
 		
 		// don't modify bin.includes by default
 		return bundleClasspath;
 	}
-
+	
 	private void addRequiredPluginsClasspathContainer(IProject project, IProgressMonitor monitor) throws CoreException {
 		if (OSGiBundleFacetUtils.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
@@ -317,21 +309,21 @@ public class OSGiBundleFacetInstallDelegate implements IDelegate {
 
 	private IPath[] getJavaSourceFolderPaths(IJavaProject javaProject) throws JavaModelException {
 		List<IPath> paths = new ArrayList<IPath>();
-
+		
 		IPackageFragmentRoot[] fragmentRoots = javaProject.getAllPackageFragmentRoots();
 		for (IPackageFragmentRoot fragmentRoot : fragmentRoots) {
 			if (fragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE && fragmentRoot.getParent().equals(javaProject)) {
 				paths.add(fragmentRoot.getPath());
 			}
 		}
-
+		
 		return paths.toArray(new IPath[paths.size()]);
 	}
-
+	
 	private IPath getRelativePath(IProject project, IPath path) {
 		return path.makeRelativeTo(project.getFullPath()).addTrailingSeparator();
 	}
-
+	
 	private void moveMetaInfToRoot(IProject project, IProgressMonitor monitor) throws CoreException {
 		// find the first META-INF folder as a second-level folder
 		IFolder folder = null;
