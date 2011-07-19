@@ -85,7 +85,7 @@ public class Activator extends Plugin {
 	private void addListeners() {
 		pdeModelListener = OSGiBundleFacetUtils.addPDEModelListener();
 		resChangeListener = OSGiBundleFacetUtils.addResChangeListener();
-}
+	}
 	
 	private void removeListeners() {
 		PDECore.getDefault().getModelManager().removePluginModelListener(pdeModelListener);

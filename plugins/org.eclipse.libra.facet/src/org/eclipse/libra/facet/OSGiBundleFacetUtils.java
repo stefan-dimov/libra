@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
@@ -21,6 +24,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -130,7 +134,7 @@ public class OSGiBundleFacetUtils {
 		// add leading slash if not available
 		if (contextRoot.charAt(0) != '/') {
 			contextRoot = '/' + contextRoot;
-}
+		}
 		return contextRoot;
 	}
 	
@@ -161,7 +165,7 @@ public class OSGiBundleFacetUtils {
 	static IPluginModelListener addPDEModelListener() {
 		IPluginModelListener pdeModelListener = new IPluginModelListener() {
 			public void modelsChanged(PluginModelDelta delta) {
-				synchronized (OSGiBundleFacetUtils.class) {
+				if (delta.getKind() == PluginModelDelta.CHANGED) {
 					final Hashtable<IProject, String> projectToContextRoot = getProjectsWithChangedWebContextRootInPDE(delta);
 					if (projectToContextRoot.size() > 0) {
 						Job j = createChangeWTPModelJob(projectToContextRoot);
@@ -181,25 +185,24 @@ public class OSGiBundleFacetUtils {
 	 * @param delta - the PDE change
 	 * @return Hashtable with the projects mapped to their new context root values
 	 */
-	synchronized static private Hashtable<IProject, String> getProjectsWithChangedWebContextRootInPDE(PluginModelDelta delta) {
-		ModelEntry[] changedEntries = delta.getChangedEntries();		
-		// check for fake events (false positive that something is changed)
+	static private Hashtable<IProject, String> getProjectsWithChangedWebContextRootInPDE(PluginModelDelta delta) {
+		ModelEntry[] changedEntries = delta.getChangedEntries();
 		final Hashtable<IProject, String> projectToContextRoot = new Hashtable<IProject, String>();
-		if (changedEntries.length == 0)
-			return projectToContextRoot;
+		
 		// iterates over all the changed entries to find the affected bundles
 		for (ModelEntry projectModel : changedEntries) {
-			String projectName = projectModel.getModel().toString();
-			final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-			try {
-				if (shouldModelsBeSyncronized(project)) {  
-					String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
-					projectToContextRoot.put(project, contextRootFromPDEModel);
+			IResource resource = (IResource) projectModel.getModel().getAdapter(IResource.class);
+			System.out.println("++++++ PDE model changed: " + resource);
+			if (resource instanceof IProject) {
+				IProject project = (IProject) resource;
+				try {
+					if (shouldModelsBeSynchronized(project)) {  
+						String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
+						projectToContextRoot.put(project, contextRootFromPDEModel);
+					}
+				} catch (CoreException e) {
+					Activator.logError("Could not update the context root in WTP model of the project " + project.getName(), e); //$NON-NLS-1$
 				}
-			} catch (CoreException e) {
-				if (project != null)
-					Activator.logError("Could not update the context root in WTP model of the project " + project.getName(), e);	//$NON-NLS-1$
-				continue;
 			}
 		}
 		return projectToContextRoot;
@@ -212,64 +215,76 @@ public class OSGiBundleFacetUtils {
 	 * @return the new job
 	 */
 	private static Job createChangeWTPModelJob(final Hashtable<IProject, String> projectToContextRoot) {
-		Job j = new Job("Change context root in WTP model") {	//$NON-NLS-1$
+		Job job = new Job("Change context root in WTP model") {	//$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				for (IProject project : projectToContextRoot.keySet()) {
+					System.out.println("++++++ PDE > WTP - " + project.getName());
 					OSGiBundleFacetUtils.setContextRootInWTPModel(project, projectToContextRoot.get(project));
 				}
 				return Status.OK_STATUS;
 			}
-			public boolean belongsTo(Object family) {
-				return PDE_MODEL_LISTENER_JOBFAMILY.equals(family);
-			};
 		};
-		return j;
+		return job;
 	}
 	
-	private static boolean isVirtualComponentSettingsFileChanged(IResourceDelta delta) {
+	private static boolean isVirtualComponentSettingsFileChanged(IResourceDelta delta) throws CoreException {
 		IResource resource = delta.getResource();
-		if ((resource == null) || !IProject.class.isInstance(resource))
-			return false;	
-		IResourceDelta[] ch = delta.getAffectedChildren(IResourceDelta.CHANGED);
-		for (IResourceDelta d : ch) {
-			IResource res = d.getResource();
-			// find '.settings' folder
-			if (isDotSettingsFolder(res)) {	
-				IResourceDelta[] ch1 = d.getAffectedChildren(IResourceDelta.CHANGED);
-				for (IResourceDelta d1 : ch1) {
-					IResource res1 = d1.getResource();
-					// find 'org.eclipse.wst.common.component' file
-					if (isVirtualComponentSettingsFile(res1))	//$NON-NLS-1$
-						return true;
+		if (resource instanceof IProject) {
+			IResourceDelta[] ch = delta.getAffectedChildren(IResourceDelta.CHANGED);
+			for (IResourceDelta d : ch) {
+				IResource res = d.getResource();
+				// find '.settings' folder
+				if (isDotSettingsFolder(res)) {	
+					IResourceDelta[] ch1 = d.getAffectedChildren(IResourceDelta.CHANGED);
+					for (IResourceDelta d1 : ch1) {
+						IResource res1 = d1.getResource();
+						// find 'org.eclipse.wst.common.component' file
+						if (isVirtualComponentSettingsFile(res1)) {
+							dumpFile((IFile) res1);
+							return true;
+						}
+					}
+				} else if (res instanceof IFolder && res.getFullPath().lastSegment().equalsIgnoreCase("WebContent")) {
+					IResourceDelta[] ch1 = d.getAffectedChildren(IResourceDelta.CHANGED);
+					for (IResourceDelta d1 : ch1) {
+						IResource res1 = d1.getResource();
+						if (res1 instanceof IFolder && res1.getFullPath().lastSegment().equalsIgnoreCase("META-INF")) {
+							IResourceDelta[] ch2 = d1.getAffectedChildren(IResourceDelta.CHANGED);
+							for (IResourceDelta d2 : ch2) {
+								IResource res2 = d2.getResource();
+								if (res2 instanceof IFile && res2.getFullPath().lastSegment().equalsIgnoreCase("MANIFEST.MF")) {
+									dumpFile((IFile) res2);
+								}
+							}
+						}
+					}
 				}
+				
 			}
-			
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks if the resource is the '.settings' folder of the project
 	 * 
-	 * @param res - The checked resource
+	 * @param resource - The checked resource
 	 * @return true if it's the correct folder
 	 */
-	private static boolean isDotSettingsFolder(IResource res) {
-		return (res != null) && 
-				IFolder.class.isInstance(res) && 
-				res.getFullPath().lastSegment().equalsIgnoreCase(".settings");	//$NON-NLS-1$	
+	private static boolean isDotSettingsFolder(IResource resource) {
+		return resource instanceof IFolder && 
+				resource.getFullPath().lastSegment().equals(".settings");	//$NON-NLS-1$	
 	}
 	
 	/**
 	 * Checks if the resource is the 'org.eclipse.wst.common.component' file
 	 * 
-	 * @param res - The checked resource
+	 * @param resource - The checked resource
 	 * @return true if this is the correct file. Otherwise - false
 	 */
-	private static boolean isVirtualComponentSettingsFile(IResource res) {
-		return (res != null) && 
-				IFile.class.isInstance(res) && 
-				res.getFullPath().lastSegment().equalsIgnoreCase("org.eclipse.wst.common.component");	//$NON-NLS-1$	
+	private static boolean isVirtualComponentSettingsFile(IResource resource) {
+		return resource instanceof IFile && 
+				resource.getFullPath().lastSegment().equalsIgnoreCase("org.eclipse.wst.common.component");	//$NON-NLS-1$	
 	}
 	
 	/**
@@ -278,24 +293,30 @@ public class OSGiBundleFacetUtils {
 	 * @param delta
 	 * @return Hashtable with projects mapped to the new context root values
 	 */
-	synchronized static private Hashtable<IProject, String> getProjectsWithChangedWebContextRootInWTP(IResourceDelta delta) {
+	static private Hashtable<IProject, String> getProjectsWithChangedWebContextRootInWTP(IResourceDelta delta) {
+		dump(delta);
 		IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
-		final Hashtable<IProject, String> ht = new Hashtable<IProject, String>();
+		final Hashtable<IProject, String> projectToContextRoot = new Hashtable<IProject, String>();
 		for (IResourceDelta child : children) {
-			if (!isVirtualComponentSettingsFileChanged(child))
-				continue;			
-			IProject project = (IProject)child.getResource();
 			try {
-				if (shouldModelsBeSyncronized(project)) {
-					String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
-					// add the project with changed context root to the hashtable
-					ht.put(project, contextRootFromWTPModel);
+				if (isVirtualComponentSettingsFileChanged(child)) {
+					IProject project = (IProject) child.getResource();
+					try {
+						if (shouldModelsBeSynchronized(project)) {
+							String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
+							// add the project with changed context root to the hashtable
+							projectToContextRoot.put(project, contextRootFromWTPModel);
+						}
+					} catch (CoreException e) {
+						Activator.logError("Could not update the context root in PDE model of the project " + project.getName(), e);	//$NON-NLS-1$
+					}
 				}
 			} catch (CoreException e) {
-				Activator.logError("Could not update the context root in PDE model of the project " + project.getName(), e);	//$NON-NLS-1$
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}		
-		return ht;
+		return projectToContextRoot;
 	}
 	
 	/**
@@ -305,12 +326,15 @@ public class OSGiBundleFacetUtils {
 	 * @return true if it's WAB project with inconsistent models. Otherwise - false
 	 * @throws CoreException
 	 */
-	private static boolean shouldModelsBeSyncronized(IProject project) throws CoreException {
-		if (!isWebApplicationBundle(project)) 
-			return false;
-		String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
-		String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
-		return !contextRootFromWTPModel.equals(contextRootFromPDEModel);
+	private static boolean shouldModelsBeSynchronized(IProject project) throws CoreException {
+		if (isWebApplicationBundle(project)) { 
+			String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
+			String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
+			System.out.println("------ " + contextRootFromWTPModel + " === " + contextRootFromPDEModel);
+			return !contextRootFromWTPModel.equals(contextRootFromPDEModel);
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -321,13 +345,11 @@ public class OSGiBundleFacetUtils {
 	static IResourceChangeListener addResChangeListener() {
 		IResourceChangeListener resChangeListener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
-				synchronized (OSGiBundleFacetUtils.class) {
-					final Hashtable<IProject, String> projectToContextRoot = getProjectsWithChangedWebContextRootInWTP(event.getDelta());
-					if (projectToContextRoot.size() > 0) {
-						Job job = createChangePDEModelJob(projectToContextRoot);
-						job.schedule();						
-					}	
-				}
+				final Hashtable<IProject, String> projectToContextRoot = getProjectsWithChangedWebContextRootInWTP(event.getDelta());
+				if (projectToContextRoot.size() > 0) {
+					Job job = createChangePDEModelJob(projectToContextRoot);
+					job.schedule();						
+				}	
 			}
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resChangeListener, IResourceChangeEvent.POST_CHANGE);		
@@ -344,6 +366,7 @@ public class OSGiBundleFacetUtils {
 		Job job = new Job("Change context root in PDE model") {	//$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				for (IProject project : projectToContextRoot.keySet()) {
+					System.out.println("++++++ WTP > PDE - " + project.getName());
 					try {
 						OSGiBundleFacetUtils.setContextRootInPDEModel(project, projectToContextRoot.get(project));
 					} catch (CoreException e) {
@@ -352,11 +375,50 @@ public class OSGiBundleFacetUtils {
 				}
 				return Status.OK_STATUS;
 			}
-			public boolean belongsTo(Object family) {
-				return RESOURCE_MODEL_LISTENER_JOBFAMILY.equals(family);
-			};
 		};
 		return job;
+	}
+	
+	static void dump(IResourceDelta delta) {
+		StringBuffer buffer = new StringBuffer();
+	    IPath path = delta.getFullPath();
+	    for (int i = path.segmentCount(); --i > 0;)
+	       buffer.append("  ");
+	    switch (delta.getKind()) {
+	        case IResourceDelta.ADDED:
+	            buffer.append('+');
+	            break;
+	        case IResourceDelta.REMOVED:
+	            buffer.append('-');
+	            break;
+	        case IResourceDelta.CHANGED:
+	            buffer.append('*');
+	            break;
+	        case IResourceDelta.NO_CHANGE:
+	            buffer.append('=');
+	            break;
+	        default:
+	            buffer.append('?');
+	            break;
+	    }
+	    buffer.append(path);
+	    System.out.println(buffer.toString());
+	    IResourceDelta[] children = delta.getAffectedChildren();
+	    for (int i = 0, l = children.length; i < l; i++)
+	        dump(children[i]);
+	}
+	
+	private static void dumpFile(IFile file) throws CoreException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
+		String line;
+		try {
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
