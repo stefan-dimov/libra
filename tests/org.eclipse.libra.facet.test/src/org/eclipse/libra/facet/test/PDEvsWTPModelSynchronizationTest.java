@@ -14,93 +14,32 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class PDEvsWTPModelSynchronizationTest {
+
+	private static final String APPEND = "Changed";	
 	
 	private static final String WAB_PRJ_LOCATION = "resources/TestWAB.zip_";
-	private static final String WAB_PRJ_NAME = "TestWAB";	
+	private static final String WAB_PRJ_NAME = "TestWAB";
 	
 	private static final String WAB_PRJ_LOCATION_2 = "resources/TestWAB2.zip_";	
 	private static final String WAB_PRJ_NAME_2 = "TestWAB2";
 	
-	private static final String APPEND = "Changed";	
 	private static int MAX_ATTEMPTS = 20;
 	
 	
 	@Test
 	public void checkPDEChangeLeadsToWTPChange() throws Exception {		
-		
 		IProject wabProject = importProjectInWorkspace(WAB_PRJ_LOCATION, WAB_PRJ_NAME);	    	
     	String newPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject) + APPEND;
     	OSGiBundleFacetUtils.setContextRootInPDEModel(wabProject, newPDEWebContextPath);
-    	    	
-    	boolean equals = false;
-    	
-    	for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    		
-    		newPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject);
-    		String currentWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject);
-    		equals = newPDEWebContextPath.equals(currentWTPWebContextPath);
-    		  			
-    		if (!equals) {
-    			wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-    			try {
-    				Thread.sleep(1*1000);
-    			} catch (InterruptedException iexc) {
-    				System.out.println("Interrupted exception caught. Checking once more.");
-    				
-    				
-    				newPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject);
-    	    		currentWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject);
-    	    		equals = newPDEWebContextPath.equals(currentWTPWebContextPath);
-    				
-    				Assert.assertTrue(equals);
-    				return;
-    			}
-    		} else {
-    			break;
-    		}
-    		
-    	}  	    	
-    			
-		Assert.assertTrue(equals);
-		
+    	checkModels(wabProject);
 	}
 	
 	@Test
 	public void checkWTPChangeLeadsToPDEChange() throws Exception {
-		
-		
-		IProject wabProject2 = importProjectInWorkspace(WAB_PRJ_LOCATION_2, WAB_PRJ_NAME_2);	    	
-    	String newWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject2) + APPEND;
-    	OSGiBundleFacetUtils.setContextRootInWTPModel(wabProject2, newWTPWebContextPath);        	
-    	    	
-    	boolean equals = false;
-    	
-    	for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {    		
-    		
-    		newWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject2);
-    		String currentPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject2);	
-    		equals = newWTPWebContextPath.equals(currentPDEWebContextPath);
-  			
-    		if (!equals) {
-    			wabProject2.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-    			try {
-    				Thread.sleep(1*1000);
-    			} catch (InterruptedException iexc) {
-    				System.out.println("Interrupted exception caught. Checking once more.");
-    				
-    				newWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject2);
-    	    		currentPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject2);	
-    	    		equals = newWTPWebContextPath.equals(currentPDEWebContextPath);
-    				Assert.assertTrue(equals);
-    				
-    				return;
-    			}
-    		} else {
-    			break;
-    		}
-    	}  	       	
-    	Assert.assertTrue(equals);
-		
+		IProject wabProject = importProjectInWorkspace(WAB_PRJ_LOCATION_2, WAB_PRJ_NAME_2);	    	
+    	String newWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject) + APPEND;
+    	OSGiBundleFacetUtils.setContextRootInWTPModel(wabProject, newWTPWebContextPath);        	
+    	checkModels(wabProject);
 	}
 	
 	
@@ -112,6 +51,39 @@ public class PDEvsWTPModelSynchronizationTest {
 		ProjectUnzipUtil util = new ProjectUnzipUtil(new Path(localZipPath), new String[] {projectName});
 		Assert.assertTrue(util.createProjects());
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+	}
+	
+	private boolean areModelsEqual(IProject wabProject) throws CoreException {
+		String newPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject);
+		String currentWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject);
+		return newPDEWebContextPath.equals(currentWTPWebContextPath);
+	}
+	
+	private void checkModels(IProject wabProject) throws CoreException {
+		boolean equal = false;
+    	
+    	for (int attempt = 0; attempt < MAX_ATTEMPTS && !equal; attempt++) {    		
+    		equal = areModelsEqual(wabProject);
+    		if (!equal) {
+    			// we need to wait for the other model to refresh
+    			wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+    			try {
+    				Thread.sleep(1000);// 1 second
+    			} catch (InterruptedException iexc) {
+    				System.out.println("Interrupted exception caught. Checking once more.");
+    				wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+    				equal = areModelsEqual(wabProject);
+    			}
+    		}
+    	}  	       	
+
+    	// check that the models are equal
+    	Assert.assertTrue(equal);
+
+    	// check that both models are set to the new context root
+		String expectedContextRoot = '/' + wabProject.getName() + APPEND;
+    	Assert.assertEquals(expectedContextRoot, OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject));
+    	Assert.assertEquals(expectedContextRoot, OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject));
 	}
 
 }

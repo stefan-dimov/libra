@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.libra.facet;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
@@ -104,6 +102,10 @@ public class OSGiBundleFacetUtils {
 	public static boolean isWebProject(IProject project) throws CoreException {
 		return FacetedProjectFramework.hasProjectFacet(project, WEB_FACET);
 	}
+	
+	public static boolean isWebApplicationBundle(IProject project) throws CoreException {
+		return isWebProject(project) && isOSGiBundle(project);
+	}	
 
 	public static boolean isJpaProject(IProject project) throws CoreException {
 		return FacetedProjectFramework.hasProjectFacet(project, JPA_FACET);
@@ -151,77 +153,93 @@ public class OSGiBundleFacetUtils {
 		bundleProjectDescription.apply(new NullProgressMonitor());
 	}	
 
+	/**
+	 * Adds PDE model listener to the PDE model
+	 * 
+	 * @return the listener
+	 */
 	static IPluginModelListener addPDEModelListener() {
 		IPluginModelListener pdeModelListener = new IPluginModelListener() {
-			
 			public void modelsChanged(PluginModelDelta delta) {
-				
 				synchronized (OSGiBundleFacetUtils.class) {
-					ModelEntry[] changedEntries = delta.getChangedEntries();
-					if (changedEntries.length == 0)
-						return;
-					final Hashtable<IProject, String> ht = new Hashtable<IProject, String>();
-					for (ModelEntry projectModel : changedEntries) {
-						String projectName = projectModel.getModel().toString();
-						final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-						try {
-							if ((project == null) || !OSGiBundleFacetUtils.isWebProject(project))
-								continue;
-							String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
-							if (contextRootFromPDEModel == null)
-								continue;
-							String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);						
-							if (!contextRootFromPDEModel.equals(contextRootFromWTPModel)) 
-								ht.put(project, contextRootFromPDEModel);														
-						} catch (CoreException e) {
-							if (project != null)
-								Activator.logError("Could not update the context root in WTP model of the project " + project.getName(), e);	//$NON-NLS-1$
-							continue;
-						}
-					}
-					if (ht.size() > 0) {
-						Job j = new Job("Change context root in WTP model") {	//$NON-NLS-1$
-							protected IStatus run(IProgressMonitor monitor) {
-								for (IProject project : ht.keySet()) {
-									OSGiBundleFacetUtils.setContextRootInWTPModel(project, ht.get(project));
-								}
-								return Status.OK_STATUS;
-							}
-							public boolean belongsTo(Object family) {
-								return PDE_MODEL_LISTENER_JOBFAMILY.equals(family);
-							};
-						};
+					final Hashtable<IProject, String> projectToContextRoot = getProjectsWithChangedWebContextRootInPDE(delta);
+					if (projectToContextRoot.size() > 0) {
+						Job j = createChangeWTPModelJob(projectToContextRoot);
 						j.schedule();						
 					}
+				}
 			}
-		}
 			
 		}; 
 		PDECore.getDefault().getModelManager().addPluginModelListener(pdeModelListener);
 		return pdeModelListener;
 	}
 	
-	static boolean isProjectWithChangedWebContextRootInWTP (IResourceDelta delta) {
-		IResource res = delta.getResource();
-		if ((res == null) || !IProject.class.isInstance(res))
+	/**
+	 * Finds out all the projects with changed context root in PDE model
+	 * 
+	 * @param delta - the PDE change
+	 * @return Hashtable with the projects mapped to their new context root values
+	 */
+	synchronized static private Hashtable<IProject, String> getProjectsWithChangedWebContextRootInPDE(PluginModelDelta delta) {
+		ModelEntry[] changedEntries = delta.getChangedEntries();		
+		// check for fake events (false positive that something is changed)
+		final Hashtable<IProject, String> projectToContextRoot = new Hashtable<IProject, String>();
+		if (changedEntries.length == 0)
+			return projectToContextRoot;
+		// iterates over all the changed entries to find the affected bundles
+		for (ModelEntry projectModel : changedEntries) {
+			String projectName = projectModel.getModel().toString();
+			final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			try {
+				if (shouldModelsBeSyncronized(project)) {  
+					String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
+					projectToContextRoot.put(project, contextRootFromPDEModel);
+				}
+			} catch (CoreException e) {
+				if (project != null)
+					Activator.logError("Could not update the context root in WTP model of the project " + project.getName(), e);	//$NON-NLS-1$
+				continue;
+			}
+		}
+		return projectToContextRoot;
+	}
+	
+	/**
+	 * Creates a job that will synchronize both models (from PDE to WTP)
+	 * 
+	 * @param projectToContextRoot - Hashtable containing all the projects that has to be synchronized
+	 * @return the new job
+	 */
+	private static Job createChangeWTPModelJob(final Hashtable<IProject, String> projectToContextRoot) {
+		Job j = new Job("Change context root in WTP model") {	//$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				for (IProject project : projectToContextRoot.keySet()) {
+					OSGiBundleFacetUtils.setContextRootInWTPModel(project, projectToContextRoot.get(project));
+				}
+				return Status.OK_STATUS;
+			}
+			public boolean belongsTo(Object family) {
+				return PDE_MODEL_LISTENER_JOBFAMILY.equals(family);
+			};
+		};
+		return j;
+	}
+	
+	private static boolean isVirtualComponentSettingsFileChanged(IResourceDelta delta) {
+		IResource resource = delta.getResource();
+		if ((resource == null) || !IProject.class.isInstance(resource))
 			return false;	
 		IResourceDelta[] ch = delta.getAffectedChildren(IResourceDelta.CHANGED);
 		for (IResourceDelta d : ch) {
-			IResource r = d.getResource();
-			if ((r != null) && 
-				IFolder.class.isInstance(r) && 
-				r.getFullPath().lastSegment().
-						equalsIgnoreCase(".settings")) {	//$NON-NLS-1$
-				
-				
+			IResource res = d.getResource();
+			// find '.settings' folder
+			if (isDotSettingsFolder(res)) {	
 				IResourceDelta[] ch1 = d.getAffectedChildren(IResourceDelta.CHANGED);
 				for (IResourceDelta d1 : ch1) {
-					IResource r1 = d1.getResource();
-					if ((r1 != null) && 
-						IFile.class.isInstance(r1) && 
-						r1.getFullPath().lastSegment().
-							equalsIgnoreCase("org.eclipse.wst.common.component"))	//$NON-NLS-1$
-						
+					IResource res1 = d1.getResource();
+					// find 'org.eclipse.wst.common.component' file
+					if (isVirtualComponentSettingsFile(res1))	//$NON-NLS-1$
 						return true;
 				}
 			}
@@ -230,24 +248,49 @@ public class OSGiBundleFacetUtils {
 		return false;
 	}
 	
-	// org.eclipse.wst.common.component
+	/**
+	 * Checks if the resource is the '.settings' folder of the project
+	 * 
+	 * @param res - The checked resource
+	 * @return true if it's the correct folder
+	 */
+	private static boolean isDotSettingsFolder(IResource res) {
+		return (res != null) && 
+				IFolder.class.isInstance(res) && 
+				res.getFullPath().lastSegment().equalsIgnoreCase(".settings");	//$NON-NLS-1$	
+	}
 	
+	/**
+	 * Checks if the resource is the 'org.eclipse.wst.common.component' file
+	 * 
+	 * @param res - The checked resource
+	 * @return true if this is the correct file. Otherwise - false
+	 */
+	private static boolean isVirtualComponentSettingsFile(IResource res) {
+		return (res != null) && 
+				IFile.class.isInstance(res) && 
+				res.getFullPath().lastSegment().equalsIgnoreCase("org.eclipse.wst.common.component");	//$NON-NLS-1$	
+	}
+	
+	/**
+	 * Creates hashtable containing the projects with changed context root in WTP model
+	 * 
+	 * @param delta
+	 * @return Hashtable with projects mapped to the new context root values
+	 */
 	synchronized static private Hashtable<IProject, String> getProjectsWithChangedWebContextRootInWTP(IResourceDelta delta) {
 		IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
 		final Hashtable<IProject, String> ht = new Hashtable<IProject, String>();
 		for (IResourceDelta child : children) {
-			if (!isProjectWithChangedWebContextRootInWTP(child))
+			if (!isVirtualComponentSettingsFileChanged(child))
 				continue;			
 			IProject project = (IProject)child.getResource();
 			try {
-				if (!OSGiBundleFacetUtils.isOSGiBundle(project) && !OSGiBundleFacetUtils.isWebProject(project)) 
-					continue;
-				String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
-				if (contextRootFromWTPModel == null)
-					continue;
-				String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
-				if (!contextRootFromWTPModel.equals(contextRootFromPDEModel)) 
-					ht.put(project, contextRootFromWTPModel);																				
+				if (shouldModelsBeSyncronized(project)) {
+					String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
+					// add the project with changed context root to the hashtable
+					ht.put(project, contextRootFromWTPModel);
+				}
 			} catch (CoreException e) {
 				Activator.logError("Could not update the context root in PDE model of the project " + project.getName(), e);	//$NON-NLS-1$
 			}
@@ -255,31 +298,33 @@ public class OSGiBundleFacetUtils {
 		return ht;
 	}
 	
+	/**
+	 * Checks if WTP and PDE models should be synchronized
+	 * 
+	 * @param project - The project that has to be checked
+	 * @return true if it's WAB project with inconsistent models. Otherwise - false
+	 * @throws CoreException
+	 */
+	private static boolean shouldModelsBeSyncronized(IProject project) throws CoreException {
+		if (!isWebApplicationBundle(project)) 
+			return false;
+		String contextRootFromWTPModel = OSGiBundleFacetUtils.getContextRootFromWTPModel(project);
+		String contextRootFromPDEModel = OSGiBundleFacetUtils.getContextRootFromPDEModel(project);
+		return !contextRootFromWTPModel.equals(contextRootFromPDEModel);
+	}
+	
+	/**
+	 * Adds WTP model listener
+	 * 
+	 * @return the newly created listener
+	 */
 	static IResourceChangeListener addResChangeListener() {
 		IResourceChangeListener resChangeListener = new IResourceChangeListener() {
-			
 			public void resourceChanged(IResourceChangeEvent event) {
-				
 				synchronized (OSGiBundleFacetUtils.class) {
-					final Hashtable<IProject, String> ht = getProjectsWithChangedWebContextRootInWTP(event.getDelta());
-					if (ht.size() > 0) {
-						Job job = new Job("Change context root in PDE model") {	//$NON-NLS-1$
-							protected IStatus run(IProgressMonitor monitor) {
-								
-								for (IProject project : ht.keySet()) {
-									try {
-										OSGiBundleFacetUtils.setContextRootInPDEModel(project, ht.get(project));
-									} catch (CoreException e) {
-										Activator.logError("Could not update the context root in PDE model of the project " + project.getName(), e);	//$NON-NLS-1$
-									}
-								}
-								return Status.OK_STATUS;
-							}
-							public boolean belongsTo(Object family) {
-								return RESOURCE_MODEL_LISTENER_JOBFAMILY.equals(family);
-							};
-						};
-						
+					final Hashtable<IProject, String> projectToContextRoot = getProjectsWithChangedWebContextRootInWTP(event.getDelta());
+					if (projectToContextRoot.size() > 0) {
+						Job job = createChangePDEModelJob(projectToContextRoot);
 						job.schedule();						
 					}	
 				}
@@ -287,6 +332,31 @@ public class OSGiBundleFacetUtils {
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resChangeListener, IResourceChangeEvent.POST_CHANGE);		
 		return resChangeListener;
+	}
+	
+	/**
+	 * Creates a job which will synchronize the models (from WTP to PDE)
+	 * 
+	 * @param projectToContextRoot - Hashtable which contains all the projects that has to be synchronized 
+	 * @return The new job
+	 */
+	private static Job createChangePDEModelJob(final Hashtable<IProject, String> projectToContextRoot) {
+		Job job = new Job("Change context root in PDE model") {	//$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				for (IProject project : projectToContextRoot.keySet()) {
+					try {
+						OSGiBundleFacetUtils.setContextRootInPDEModel(project, projectToContextRoot.get(project));
+					} catch (CoreException e) {
+						Activator.logError("Could not update the context root in PDE model of the project " + project.getName(), e);	//$NON-NLS-1$
+					}
+				}
+				return Status.OK_STATUS;
+			}
+			public boolean belongsTo(Object family) {
+				return RESOURCE_MODEL_LISTENER_JOBFAMILY.equals(family);
+			};
+		};
+		return job;
 	}
 
 }
