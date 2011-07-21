@@ -2,6 +2,7 @@ package org.eclipse.libra.facet.test;
 
 import java.io.IOException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,6 +24,9 @@ public class PDEvsWTPModelSynchronizationTest {
 	private static final String WAB_PRJ_LOCATION_2 = "resources/TestWAB2.zip_";	
 	private static final String WAB_PRJ_NAME_2 = "TestWAB2";
 	
+	private static final String WAB_PRJ_LOCATION_3 = "resources/TestWAB3.zip_";	
+	private static final String WAB_PRJ_NAME_3 = "TestWAB3";	
+	
 	private static int MAX_ATTEMPTS = 20;
 	
 	
@@ -42,6 +46,15 @@ public class PDEvsWTPModelSynchronizationTest {
     	checkModels(wabProject);
 	}
 	
+	@Test
+	public void checkSettingsFileChangeLeadsToModelChange() throws Exception {
+		IProject wabProject = importProjectInWorkspace(WAB_PRJ_LOCATION_3, WAB_PRJ_NAME_3);	 
+		String newWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject) + APPEND;
+		IFile settingsFile = wabProject.getFile(new Path(".settings/org.eclipse.wst.common.component"));
+		Util.changeWebContextRootFromSettings(settingsFile, newWTPWebContextPath);
+    	checkModels(wabProject);
+	}	
+	
 	
 	// ------------------------------ private helper methods ----------------------------------------------
 	
@@ -53,17 +66,21 @@ public class PDEvsWTPModelSynchronizationTest {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 	}
 	
-	private boolean areModelsEqual(IProject wabProject) throws CoreException {
+	private boolean areModelsEqualtoTheExpectedValue(IProject wabProject) throws CoreException {
+		String expectedContextRoot = '/' + wabProject.getName() + APPEND;
 		String newPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject);
-		String currentWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject);
-		return newPDEWebContextPath.equals(currentWTPWebContextPath);
+		String newWTPWebContextPath = OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject);
+		boolean equal =  newPDEWebContextPath.equals(newWTPWebContextPath);
+		equal = equal && expectedContextRoot.equals(newPDEWebContextPath);
+		equal = equal && expectedContextRoot.equals(newWTPWebContextPath);
+		return equal;
 	}
 	
 	private void checkModels(IProject wabProject) throws CoreException {
 		boolean equal = false;
     	
     	for (int attempt = 0; attempt < MAX_ATTEMPTS && !equal; attempt++) {    		
-    		equal = areModelsEqual(wabProject);
+    		equal = areModelsEqualtoTheExpectedValue(wabProject);
     		if (!equal) {
     			// we need to wait for the other model to refresh
     			wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
@@ -72,18 +89,13 @@ public class PDEvsWTPModelSynchronizationTest {
     			} catch (InterruptedException iexc) {
     				System.out.println("Interrupted exception caught. Checking once more.");
     				wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-    				equal = areModelsEqual(wabProject);
+    				equal = areModelsEqualtoTheExpectedValue(wabProject);
     			}
     		}
     	}  	       	
 
-    	// check that the models are equal
+    	// check that the models are equal to the expected value
     	Assert.assertTrue(equal);
-
-    	// check that both models are set to the new context root
-		String expectedContextRoot = '/' + wabProject.getName() + APPEND;
-    	Assert.assertEquals(expectedContextRoot, OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject));
-    	Assert.assertEquals(expectedContextRoot, OSGiBundleFacetUtils.getContextRootFromWTPModel(wabProject));
 	}
 
 }
