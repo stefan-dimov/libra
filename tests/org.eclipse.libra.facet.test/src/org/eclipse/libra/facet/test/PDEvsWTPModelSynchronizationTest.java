@@ -27,6 +27,10 @@ public class PDEvsWTPModelSynchronizationTest {
 	private static final String WAB_PRJ_LOCATION_3 = "resources/TestWAB3.zip_";	
 	private static final String WAB_PRJ_NAME_3 = "TestWAB3";	
 	
+	private static final String WAB_PRJ_LOCATION_4 = "resources/TestWAB4.zip_";	
+	private static final String WAB_PRJ_NAME_4 = "TestWAB4";	
+	
+	
 	private static int MAX_ATTEMPTS = 20;
 	
 	
@@ -55,6 +59,17 @@ public class PDEvsWTPModelSynchronizationTest {
     	checkModels(wabProject);
 	}	
 	
+	@Test
+	public void checkManifetsFileChangeLeadsToModelChange() throws Exception {
+		IProject wabProject = importProjectInWorkspace(WAB_PRJ_LOCATION_4, WAB_PRJ_NAME_4);	
+		String oldPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject);
+		String expectedPDEWebContextPath = OSGiBundleFacetUtils.getContextRootFromPDEModel(wabProject) + APPEND;
+		IFile manifestFile = wabProject.getFile(new Path("WebContent/META-INF/MANIFEST.MF"));
+		Util.changeWebContextRootInManifest(manifestFile, oldPDEWebContextPath, expectedPDEWebContextPath);
+		wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+    	checkModels(wabProject);
+	}		
+	
 	
 	// ------------------------------ private helper methods ----------------------------------------------
 	
@@ -79,8 +94,15 @@ public class PDEvsWTPModelSynchronizationTest {
 	private void checkModels(IProject wabProject) throws CoreException {
 		boolean equal = false;
     	
-    	for (int attempt = 0; attempt < MAX_ATTEMPTS && !equal; attempt++) {    		
-    		equal = areModelsEqualtoTheExpectedValue(wabProject);
+    	for (int attempt = 0; attempt < MAX_ATTEMPTS && !equal; attempt++) {
+    		try {
+    			equal = areModelsEqualtoTheExpectedValue(wabProject);
+    		} catch (Exception e) {
+    			// Sometimes areModelsEqualtoTheExpectedValue(...) throws ResourceException
+    			// because the resources are not synched with the file system
+    			// This exception is being ignored and iterations continue,
+    			// because two rows below the project id being refreshed ...
+    		}
     		if (!equal) {
     			// we need to wait for the other model to refresh
     			wabProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
